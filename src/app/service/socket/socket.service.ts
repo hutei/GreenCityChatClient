@@ -1,4 +1,4 @@
-import {Inject, Injectable, Input, OnInit} from '@angular/core';
+import {Injectable} from '@angular/core';
 
 declare var SockJS;
 declare var Stomp;
@@ -42,16 +42,13 @@ export class SocketService {
   }
 
   onMessageReceived = (msg) => {
-    console.log(msg);
-    console.log('On msg received!');
+    const chatMsg = JSON.parse(msg.body);
+    this.chatRoom.messages.push(chatMsg);
   }
 
   sendMessage = (chatMessageDto: ChatMessageDto) => {
     this.stompClient.send('/app/chat', {}, JSON.stringify(chatMessageDto));
-
-      /*const newMessages = [...messages];
-      newMessages.push(message);
-      setMessages(newMessages);*/
+    this.chatRoom.messages.push(chatMessageDto);
   }
 
   public closeWebSocket(): void {

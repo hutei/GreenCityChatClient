@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Observable} from 'rxjs';
 import { UserDto } from '../../model/user/user-dto.model';
-import {currentUserLink, participantLink} from '../../../links';
+import {participantLink} from '../../../links';
 
 @Injectable({
   providedIn: 'root'
