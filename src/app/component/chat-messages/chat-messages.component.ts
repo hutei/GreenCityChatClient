@@ -4,11 +4,11 @@ import {ChatRoomDto} from '../../model/chat-room/chat-room-dto.model';
 import {SocketService} from '../../service/socket/socket.service';
 
 @Component({
-  selector: 'app-chat-room-messages',
-  templateUrl: './chat-room-messages.component.html',
-  styleUrls: ['./chat-room-messages.component.css'],
+  selector: 'app-chat-messages',
+  templateUrl: './chat-messages.component.html',
+  styleUrls: ['./chat-messages.component.css'],
 })
-export class ChatRoomMessagesComponent implements OnInit, OnDestroy {
+export class ChatMessagesComponent implements OnInit, OnDestroy {
 
   newMessage = '';
 
@@ -43,6 +43,5 @@ export class ChatRoomMessagesComponent implements OnInit, OnDestroy {
       console.log(err);
     }
   }
-
 
 }
