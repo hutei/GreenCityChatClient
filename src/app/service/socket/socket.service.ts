@@ -32,7 +32,7 @@ export class SocketService {
   onConnected = () => {
     console.log('connected');
     this.stompClient.subscribe(
-      '/chat/' + this.chatRoom.id + '' + '/queue/messages',
+      '/room/' + this.chatRoom.id + '' + '/queue/messages',
       this.onMessageReceived
     );
   }
@@ -43,7 +43,7 @@ export class SocketService {
   onMessageReceived = (msg) => {
     console.log(msg);
     const chatMsg = JSON.parse(msg.body);
-    this.chatRoom.messages.push(chatMsg);
+    this.chatRoom.messages.unshift(chatMsg);
   }
 
   sendMessage = (chatMessageDto: ChatMessageDto) => {
