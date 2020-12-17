@@ -12,10 +12,6 @@ export class UserService{
   constructor(private http: HttpClient) {
   }
 
-  getUserById(id: number): Observable<UserDto> {
-    return this.http.get<UserDto>(`${participantLink}/` + id);
-  }
-
   getCurrentUser(): Observable<UserDto> {
     return this.http.get<UserDto>(`${participantLink}`);
   }

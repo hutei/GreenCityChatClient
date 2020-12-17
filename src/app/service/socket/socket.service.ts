@@ -36,19 +36,18 @@ export class SocketService {
       this.onMessageReceived
     );
   }
-
   onError = (err) => {
     console.log(err);
   }
 
   onMessageReceived = (msg) => {
+    console.log(msg);
     const chatMsg = JSON.parse(msg.body);
     this.chatRoom.messages.push(chatMsg);
   }
 
   sendMessage = (chatMessageDto: ChatMessageDto) => {
     this.stompClient.send('/app/chat', {}, JSON.stringify(chatMessageDto));
-    this.chatRoom.messages.push(chatMessageDto);
   }
 
   public closeWebSocket(): void {

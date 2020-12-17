@@ -1,7 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {Message} from '@angular/compiler/src/i18n/i18n_ast';
 import {UserDto} from '../../model/user/user-dto.model';
-import {UserService} from '../../service/user/user.service';
 import {ChatRoomDto} from '../../model/chat-room/chat-room-dto.model';
 import {SocketService} from '../../service/socket/socket.service';
 
@@ -12,7 +10,7 @@ import {SocketService} from '../../service/socket/socket.service';
 })
 export class ChatRoomMessagesComponent implements OnInit, OnDestroy {
 
-  newMessage = 'message';
+  newMessage = '';
 
   @Input() room: ChatRoomDto;
   @Input() currentUser: UserDto;

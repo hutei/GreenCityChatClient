@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Observable} from 'rxjs';
 import { backendChatLink } from '../../../links';
 import { ChatRoomDto } from '../../model/chat-room/chat-room-dto.model';
 
