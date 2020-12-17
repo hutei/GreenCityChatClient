@@ -32,7 +32,7 @@ export class SocketService {
   onConnected = () => {
     console.log('connected');
     this.stompClient.subscribe(
-      '/room/' + this.chatRoom.id + '' + '/queue/messages',
+      '/chat/' + this.chatRoom.id + '' + '/queue/messages',
       this.onMessageReceived
     );
   }
