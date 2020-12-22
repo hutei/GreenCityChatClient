@@ -6,6 +6,7 @@ import {webSocketEndPointLink, webSocketLink} from '../../../links';
 import {ChatMessageDto} from '../../model/chat-message/chat-message-dto.model';
 import {UserDto} from '../../model/user/user-dto.model';
 import {ChatRoomDto} from '../../model/chat-room/chat-room-dto.model';
+import {ChatRoomService} from '../chat-room/chat-room.service';
 
 
 @Injectable({
@@ -17,9 +18,10 @@ export class SocketService {
   stompClient: any;
   chatRoom: ChatRoomDto;
   currentUser: UserDto;
+  chatRooms: ChatRoomDto[];
 
-  constructor() {
-    this.connect();
+  constructor(private chatService: ChatRoomService) {
+    this.chatService.getAllRooms().subscribe(data => {this.chatRooms = data; });
   }
 
   connect(): void {
@@ -31,10 +33,8 @@ export class SocketService {
 
   onConnected = () => {
     console.log('connected');
-    this.stompClient.subscribe(
-      '/room/' + this.chatRoom.id + '' + '/queue/messages',
-      this.onMessageReceived
-    );
+    this.chatRooms.forEach(chatRoom => {this.stompClient.subscribe('/room/' + chatRoom.id + '' + '/queue/messages',
+      this.onMessageReceived); });
   }
   onError = (err) => {
     console.log(err);
@@ -43,7 +43,7 @@ export class SocketService {
   onMessageReceived = (msg) => {
     console.log(msg);
     const chatMsg = JSON.parse(msg.body);
-    this.chatRoom.messages.unshift(chatMsg);
+    this.getChatRoomDto().messages.push(chatMsg);
   }
 
   sendMessage = (chatMessageDto: ChatMessageDto) => {
@@ -61,5 +61,12 @@ export class SocketService {
   setChatRoomDto(chatRoom: ChatRoomDto): void {
     this.chatRoom = chatRoom;
   }
+  getChatRoomDto(): ChatRoomDto{
+    return this.chatRoom;
+  }
+  setAllRooms(chatRooms: ChatRoomDto[]): void {
+    this.chatRooms = chatRooms;
+  }
+
 }
 

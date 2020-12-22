@@ -1,6 +1,8 @@
+<div class="container">
+
 <div class="messaging">
   <div class="inbox_msg">
-    <div class="inbox_people">
+  <!--  <div class="inbox_people">
       <div class="heading_srch">
         <div class="channel_heading">
           <h4>Channels</h4>
@@ -26,10 +28,35 @@
           </div>
         </div>
       </div>
+    </div> -->
+    <div class="row">
+      <div class="col">
+    <div class="inbox_people">
+      <div class="headind_srch">
+        <div class="channel_heading">
+          <h4>All Participants</h4>
+          <form (submit)="getParticipant(participant.value)" class="form-group">
+            <input type="text" placeholder="Search..." #participant class="form-inline">
+            <input type="submit" value="Search" class="btn btn-navbar">
+          </form>
+        </div>
+      </div>
+      <div class="inbox_chat">
+        <div class="channels" *ngFor="let participant of allParticipants" (click)="setCurrentRoom(getPrivateChatRoom(participant.id))">
+          <div class="chat_list">
+            <h5>
+              {{ participant.name}}
+            </h5>
+          </div>
+        </div>
+      </div>
     </div>
     <app-chat-messages *ngIf="currentClickedRoom"
                        [room]=currentClickedRoom
                        [currentUser]="currentUser"
     ></app-chat-messages>
   </div>
+    </div>
+</div>
+</div>
 </div>

@@ -120,5 +120,8 @@
       }
     }
   },
-  "defaultProject": "greencity-chat-client"
+  "defaultProject": "greencity-chat-client",
+  "cli": {
+    "analytics": "f0ca37b3-abfa-49c7-901d-2a7ded8b2fe1"
+  }
 }

@@ -24,7 +24,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.socketService.closeWebSocket();
+     this.socketService.closeWebSocket();
   }
 
   // tslint:disable-next-line:typedef
@@ -33,6 +33,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
       return;
     }
     try {
+      this.socketService.setChatRoomDto(this.room);
       this.socketService.sendMessage({
         content: this.newMessage,
         senderId: this.currentUser.id,

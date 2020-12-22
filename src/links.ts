@@ -7,3 +7,7 @@ export const webSocketEndPointLink = '/ws';
 export const participantLink = backendChatLink + '/user';
 export const currentUserLink = backendCoreLink + '/user';
 
+export const concreteRoom = backendChatLink + '/room/';
+export const allParticipantsLink = backendChatLink + '/users';
+export const allParticipantsByQuery = allParticipantsLink + '/';
+
