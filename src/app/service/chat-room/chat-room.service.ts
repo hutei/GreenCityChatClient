@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable} from 'rxjs';
-import {backendChatLink, concreteRoom, participantLink} from '../../../links';
+import {backendChatLink, participantLink} from '../../../links';
 import { ChatRoomDto } from '../../model/chat-room/chat-room-dto.model';
 
 @Injectable({

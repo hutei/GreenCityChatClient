@@ -67,6 +67,5 @@ export class SocketService {
   setAllRooms(chatRooms: ChatRoomDto[]): void {
     this.chatRooms = chatRooms;
   }
-
 }
 

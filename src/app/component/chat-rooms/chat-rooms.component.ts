@@ -3,7 +3,6 @@ import {UserDto} from '../../model/user/user-dto.model';
 import {UserService} from '../../service/user/user.service';
 import {ChatRoomService} from '../../service/chat-room/chat-room.service';
 import {ChatRoomDto} from '../../model/chat-room/chat-room-dto.model';
-import {newArray} from '@angular/compiler/src/util';
 
 @Component({
   selector: 'app-chat-rooms',
