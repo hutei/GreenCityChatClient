@@ -43,11 +43,35 @@ export class SocketService {
   onMessageReceived = (msg) => {
     console.log(msg);
     const chatMsg = JSON.parse(msg.body);
-    this.getChatRoomDto().messages.push(chatMsg);
+    if (msg.headers.delete !== undefined) {
+      this.getChatRoomDto().messages.forEach((m, index) => {
+        if (m.id === chatMsg.id) {
+          this.getChatRoomDto().messages.splice(index, 1);
+        }
+      });
+    } else if (msg.headers.update !== undefined) {
+      this.getChatRoomDto().messages.forEach((m, index) => {
+        if (m.id === chatMsg.id) {
+          this.getChatRoomDto().messages.splice(index, 1, chatMsg);
+          return;
+        }
+      });
+    }
+    else {
+      this.getChatRoomDto().messages.push(chatMsg);
+    }
   }
 
   sendMessage = (chatMessageDto: ChatMessageDto) => {
     this.stompClient.send('/app/chat', {}, JSON.stringify(chatMessageDto));
+  }
+
+  deleteMessage = (chatMessageDto: ChatMessageDto) => {
+    this.stompClient.send('/app/chat/delete', {}, JSON.stringify(chatMessageDto));
+  }
+
+  updateMessage = (chatMessageDto: ChatMessageDto) => {
+    this.stompClient.send('/app/chat/update', {}, JSON.stringify(chatMessageDto));
   }
 
   public closeWebSocket(): void {

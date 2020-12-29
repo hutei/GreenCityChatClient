@@ -73,3 +73,11 @@
   clear: both;
 }
 
+.searchInput {
+  outline: 0;
+  border: none;
+  background: transparent;
+  border-bottom: 1px solid black;
+  font-family: sans-serif;
+  color: black;
+}

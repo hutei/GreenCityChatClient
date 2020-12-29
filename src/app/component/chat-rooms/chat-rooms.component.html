@@ -9,8 +9,10 @@
         <div class="channel_heading">
           <h4>All Participants</h4>
           <form (submit)="getParticipant(participant.value)" class="form-group">
-            <input type="text" placeholder="Search..." #participant class="form-inline">
-            <input type="submit" value="Search" class="btn btn-navbar">
+            <label>
+              <input type="text" placeholder="Search..." #participant class="searchInput" size="10">
+            </label>
+            <button class="btn btn-navbar"><i class="fa fa-search"></i></button>
           </form>
         </div>
       </div>
@@ -33,3 +35,4 @@
 </div>
 </div>
 </div>
+

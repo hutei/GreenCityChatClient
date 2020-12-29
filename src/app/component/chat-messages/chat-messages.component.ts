@@ -3,25 +3,33 @@ import {UserDto} from '../../model/user/user-dto.model';
 import {ChatRoomDto} from '../../model/chat-room/chat-room-dto.model';
 import {SocketService} from '../../service/socket/socket.service';
 import {ChatMessageDto} from '../../model/chat-message/chat-message-dto.model';
+import {DatePipe} from '@angular/common';
+import * as moment from 'moment';
+import {ChatMessageService} from '../../service/chat-message/chat-message.service';
+
 
 @Component({
   selector: 'app-chat-messages',
   templateUrl: './chat-messages.component.html',
   styleUrls: ['./chat-messages.component.css'],
+  providers: [DatePipe],
 })
 export class ChatMessagesComponent implements OnInit, OnDestroy {
 
+  static lastMessage: number;
   newMessage = '';
 
   @Input() room: ChatRoomDto;
   @Input() currentUser: UserDto;
-
-  constructor(private socketService: SocketService) {
+  constructor(private socketService: SocketService, private datePipe: DatePipe, private chatMessageService: ChatMessageService) {
   }
 
   ngOnInit(): void {
     this.socketService.setChatRoomDto(this.room);
+    this.room.messages.sort( (msg1, msg2) => ( msg1.id > msg2.id ? 1 : -1));
+    console.log(this.room.messages);
     this.socketService.setCurrentUser(this.currentUser);
+    this.getLastMessageId();
   }
 
   ngOnDestroy(): void {
@@ -36,6 +44,8 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
     try {
       this.socketService.setChatRoomDto(this.room);
       const chatMessage = new ChatMessageDto();
+      ++ChatMessagesComponent.lastMessage;
+      chatMessage.id = ChatMessagesComponent.lastMessage;
       chatMessage.content = this.newMessage;
       chatMessage.senderId = this.currentUser.id;
       chatMessage.roomId = this.room.id;
@@ -45,5 +55,26 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
       console.log(err);
     }
   }
-
+  deleteMessage(messageId): void {
+    this.socketService.setChatRoomDto(this.room);
+    this.room.messages.forEach( (msg, index) => {
+      if (msg.id === messageId) {/*this.room.messages.splice(index, 1);*/
+      this.socketService.deleteMessage(this.room.messages[index]); }
+    });
+/*
+    this.chatMessageService.deleteMessage(messageId);
+*/
+  }
+  updateMessage(messageId, content): void {
+    this.socketService.setChatRoomDto(this.room);
+    content = prompt('Update message please', content);
+    this.room.messages.forEach( (msg, index) => {
+      if (msg.id === messageId) {
+      this.room.messages[index].content = content;
+      this.socketService.updateMessage(this.room.messages[index]); }
+    });
+  }
+  getLastMessageId(): void {
+    this.chatMessageService.getLastMessageId().subscribe(data => {ChatMessagesComponent.lastMessage = data; } );
+  }
 }

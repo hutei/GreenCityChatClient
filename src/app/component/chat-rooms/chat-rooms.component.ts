@@ -33,6 +33,7 @@ export class ChatRoomsComponent implements OnInit {
   }
 
   setCurrentRoom(room: ChatRoomDto): void {
+    room.messages.sort( (msg1, msg2) => ( msg1.id > msg2.id ? 1 : -1));
     this.currentClickedRoom = room;
   }
   getAllParticipants(): void {
@@ -42,6 +43,7 @@ export class ChatRoomsComponent implements OnInit {
   getPrivateChatRoom(id) {
     // tslint:disable-next-line:max-line-length
     this.chatRoomService.getPrivateChatRoom(id).subscribe(data => {this.privateChatRoom = data; console.log(this.privateChatRoom); });
+    this.privateChatRoom.messages.sort( (msg1, msg2) => ( msg1.id > msg2.id ? 1 : -1));
     return this.privateChatRoom;
   }
   // tslint:disable-next-line:typedef
