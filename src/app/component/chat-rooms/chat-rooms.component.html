@@ -1,3 +1,4 @@
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.min.css'>
 <div class="container">
 
 <div class="messaging">
@@ -5,7 +6,7 @@
     <div class="row">
       <div class="col">
     <div class="inbox_people">
-      <div class="headind_srch">
+      <!--<div class="headind_srch">
         <div class="channel_heading">
           <h4>All Participants</h4>
           <form (submit)="getParticipant(participant.value)" class="form-group">
@@ -14,14 +15,54 @@
             </label>
             <button class="btn btn-navbar"><i class="fa fa-search"></i></button>
           </form>
+          <button (click)="openAddFileDialog()">Here</button>
         </div>
-      </div>
-      <div class="inbox_chat">
+      </div>-->
+      <!--<div class="inbox_chat">
         <div class="channels" *ngFor="let participant of allParticipants" (click)="setCurrentRoom(getPrivateChatRoom(participant.id))">
           <div class="chat_list">
             <h5>
               {{ participant.name}}
             </h5>
+          </div>
+        </div>
+        <div class="channels" *ngFor="let groupRoom of groupChats" (click)="setCurrentRoom(groupRoom)">
+          <h5>{{groupRoom.name}}</h5>
+        </div>
+      </div>-->
+      <div class="headind_srch">
+        <div class="channel_heading">
+          <h4>All Chats</h4>
+          <form (submit)="getChatRooms(room.value)" class="form-group">
+            <label>
+              <input type="text" placeholder="Search..." #room class="searchInput" size="10">
+            </label>
+            <button class="btn btn-navbar"><i class="fa fa-search"></i></button>
+          </form>
+          <button (click)="openAddFileDialog()" class="btn btn-navbar">Group Chat</button>
+          <div class="btn-group dropright">
+            <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Chat with...
+            </button>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <form (submit)="getParticipant(participant.value)" class="form-group">
+                <label>
+                  <input [formControl]="queryField" type="text" placeholder="Search..." #participant class="searchInput" size="10">
+                </label>
+                <button class="btn btn-navbar"><i class="fa fa-search"></i></button>
+              </form>
+              <button class="dropdown-item btn-sm" *ngFor="let participant of allParticipants" (click)="getPrivateChatRoom(participant.id)">
+                {{participant.name}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="inbox_chat">
+        <div class="channels" *ngFor="let room of chatRooms" (click)="setCurrentRoom(room)">
+          <div class="chat_list">
+          <h5>{{room.name}}</h5>
           </div>
         </div>
       </div>

@@ -4,8 +4,8 @@ import {ChatRoomDto} from '../../model/chat-room/chat-room-dto.model';
 import {SocketService} from '../../service/socket/socket.service';
 import {ChatMessageDto} from '../../model/chat-message/chat-message-dto.model';
 import {DatePipe} from '@angular/common';
-import * as moment from 'moment';
 import {ChatMessageService} from '../../service/chat-message/chat-message.service';
+import {ChatRoomService} from '../../service/chat-room/chat-room.service';
 
 
 @Component({
@@ -18,10 +18,13 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
 
   static lastMessage: number;
   newMessage = '';
+  webSocket: any;
+  stompClient: any;
 
   @Input() room: ChatRoomDto;
   @Input() currentUser: UserDto;
-  constructor(private socketService: SocketService, private datePipe: DatePipe, private chatMessageService: ChatMessageService) {
+  // tslint:disable-next-line:max-line-length
+  constructor(private socketService: SocketService, private datePipe: DatePipe, private chatMessageService: ChatMessageService, private chatRoomService: ChatRoomService) {
   }
 
   ngOnInit(): void {

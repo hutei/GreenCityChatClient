@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {backendChatLink} from '../../../links';
 import {Observable} from 'rxjs';
-import {ChatMessageDto} from '../../model/chat-message/chat-message-dto.model';
 
 /*import {Observable} from 'rxjs';
 import {ChatMessageDto} from '../../model/chat-message/chat-message-dto.model';*/
