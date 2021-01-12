@@ -59,6 +59,7 @@ export class ChatRoomsComponent implements OnInit {
         this.currentClickedRoom.messages.sort((msg1, msg2) => (msg1.id > msg2.id ? 1 : -1));
       }
     }
+    this.socketService.setChatRoomDto(room);
   }
   getAllParticipants(): void {
     this.userService.getAllUsers().subscribe(data => {this.allParticipants = data; console.log(this.allParticipants); });

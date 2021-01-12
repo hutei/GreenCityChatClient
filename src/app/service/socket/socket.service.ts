@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 
 declare var SockJS;
 declare var Stomp;
@@ -23,7 +23,6 @@ export class SocketService {
   constructor(private chatService: ChatRoomService) {
     this.chatService.getAllRooms().subscribe(data => {this.chatRooms = data; });
   }
-
   connect(): void {
     this.webSocket = new SockJS(webSocketLink + webSocketEndPointLink);
     this.stompClient = Stomp.over(this.webSocket);
@@ -63,6 +62,18 @@ export class SocketService {
   }
 
   sendMessage = (chatMessageDto: ChatMessageDto) => {
+    let ind = 0;
+    this.chatService.getAllRooms().subscribe(data => {this.chatRooms = data; });
+    const len = this.chatRooms.length;
+    this.chatRooms.forEach( cr => {
+      if (cr.id !== this.getChatRoomDto().id) {
+        ind++;
+      }
+    });
+    if (len === ind) {
+      this.stompClient.subscribe('/room/' + this.getChatRoomDto().id + '' + '/queue/messages',
+        this.onMessageReceived);
+    }
     this.stompClient.send('/app/chat', {}, JSON.stringify(chatMessageDto));
   }
 
