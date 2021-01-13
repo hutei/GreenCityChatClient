@@ -6,6 +6,7 @@ import {ChatMessageDto} from '../../model/chat-message/chat-message-dto.model';
 import {DatePipe} from '@angular/common';
 import {ChatMessageService} from '../../service/chat-message/chat-message.service';
 import {ChatRoomService} from '../../service/chat-room/chat-room.service';
+import {ChatRoomsComponent} from '../chat-rooms/chat-rooms.component';
 
 
 @Component({
@@ -24,7 +25,11 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   @Input() room: ChatRoomDto;
   @Input() currentUser: UserDto;
   // tslint:disable-next-line:max-line-length
-  constructor(private socketService: SocketService, private datePipe: DatePipe, private chatMessageService: ChatMessageService, private chatRoomService: ChatRoomService) {
+  constructor(private socketService: SocketService,
+              private datePipe: DatePipe,
+              private chatMessageService: ChatMessageService,
+              private chatRoomService: ChatRoomService,
+              private chatRoomComponent: ChatRoomsComponent) {
   }
 
   ngOnInit(): void {
@@ -54,6 +59,9 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
       chatMessage.roomId = this.room.id;
       this.socketService.sendMessage(chatMessage);
       this.newMessage = '';
+      if (this.room.messages.length === 0) {
+        this.chatRoomComponent.chatRooms.push(this.room);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -64,9 +72,13 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
       if (msg.id === messageId) {/*this.room.messages.splice(index, 1);*/
       this.socketService.deleteMessage(this.room.messages[index]); }
     });
-/*
-    this.chatMessageService.deleteMessage(messageId);
-*/
+    if (this.room.messages.length === 1) {
+      this.chatRoomComponent.chatRooms.forEach( (cr, index) => {
+        if (this.room.id === cr.id) {
+          this.chatRoomComponent.chatRooms.splice(index, 1);
+        }
+      });
+    }
   }
   updateMessage(messageId, content): void {
     this.socketService.setChatRoomDto(this.room);
