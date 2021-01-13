@@ -59,7 +59,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
       chatMessage.roomId = this.room.id;
       this.socketService.sendMessage(chatMessage);
       this.newMessage = '';
-      if (this.room.messages.length === 0) {
+      if (this.room.messages.length === 0 && this.room.chatType === 'PRIVATE') {
         this.chatRoomComponent.chatRooms.push(this.room);
       }
     } catch (err) {
@@ -72,7 +72,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
       if (msg.id === messageId) {/*this.room.messages.splice(index, 1);*/
       this.socketService.deleteMessage(this.room.messages[index]); }
     });
-    if (this.room.messages.length === 1) {
+    if (this.room.messages.length === 1 && this.room.chatType === 'PRIVATE') {
       this.chatRoomComponent.chatRooms.forEach( (cr, index) => {
         if (this.room.id === cr.id) {
           this.chatRoomComponent.chatRooms.splice(index, 1);

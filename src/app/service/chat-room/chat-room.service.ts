@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable} from 'rxjs';
-import {allParticipantsByQuery, backendChatLink, participantLink} from '../../../links';
+import {backendChatLink, participantLink} from '../../../links';
 import { ChatRoomDto } from '../../model/chat-room/chat-room-dto.model';
-import {UserDto} from '../../model/user/user-dto.model';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +32,7 @@ export class ChatRoomService{
   getAllChatRoomsByQuery(name): Observable<Array<ChatRoomDto>> {
     return this.http.get<Array<ChatRoomDto>>(`${backendChatLink}` + `/rooms/` + name);
   }
-  getExc(): Observable<Array<ChatRoomDto>> {
-    return this.http.get<Array<ChatRoomDto>>(`${backendChatLink}` + `/exc`);
+  getAllVisibleRooms(): Observable<Array<ChatRoomDto>> {
+    return this.http.get<Array<ChatRoomDto>>(`${backendChatLink}` + `/rooms/visible`);
   }
 }

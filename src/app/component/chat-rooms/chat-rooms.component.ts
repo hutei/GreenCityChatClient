@@ -44,7 +44,7 @@ export class ChatRoomsComponent implements OnInit {
   }
 
   getAllRooms(): void {
-    this.chatRoomService.getExc().subscribe(data => { this.chatRooms = data; console.log(this.chatRooms); });
+    this.chatRoomService.getAllVisibleRooms().subscribe(data => { this.chatRooms = data; console.log(this.chatRooms); });
   }
   getCurrentUser(): void {
     this.userService.getCurrentUser().subscribe(data => { this.currentUser = data; });

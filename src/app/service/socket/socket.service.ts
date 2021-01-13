@@ -21,7 +21,7 @@ export class SocketService {
   chatRooms: ChatRoomDto[];
 
   constructor(private chatService: ChatRoomService) {
-    this.chatService.getAllRooms().subscribe(data => {this.chatRooms = data; });
+    this.chatService.getAllVisibleRooms().subscribe(data => {this.chatRooms = data; });
   }
   connect(): void {
     this.webSocket = new SockJS(webSocketLink + webSocketEndPointLink);
@@ -63,7 +63,7 @@ export class SocketService {
 
   sendMessage = (chatMessageDto: ChatMessageDto) => {
     let ind = 0;
-    this.chatService.getAllRooms().subscribe(data => {this.chatRooms = data; });
+    this.chatService.getAllVisibleRooms().subscribe(data => {this.chatRooms = data; });
     const len = this.chatRooms.length;
     this.chatRooms.forEach( cr => {
       if (cr.id !== this.getChatRoomDto().id) {
