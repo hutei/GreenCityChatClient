@@ -50,6 +50,10 @@
   float: right;
 }
 
+.fa-trash {
+  color: #E02616;
+}
+
 .chat_ib p {
   font-size: 14px;
   color: #989898;

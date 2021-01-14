@@ -7,6 +7,7 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ModalComponent} from '../modal/modal.component';
 import { FormControl } from '@angular/forms';
 import {SocketService} from '../../service/socket/socket.service';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 
 @Component({
@@ -17,11 +18,12 @@ import {SocketService} from '../../service/socket/socket.service';
 export class ChatRoomsComponent implements OnInit {
 
 
-  constructor(private userService: UserService, private chatRoomService: ChatRoomService, private dialog: MatDialog,
+  constructor(private userService: UserService, private chatRoomService: ChatRoomService,
+              private dialog: MatDialog,
               private  socketService: SocketService) {
   }
   currentUser: UserDto;
-  chatRooms: ChatRoomDto[];
+  chatRooms = [];
 
   queryField: FormControl = new FormControl();
 
@@ -92,6 +94,29 @@ export class ChatRoomsComponent implements OnInit {
   // tslint:disable-next-line:typedef
   getChatRooms(name: string) {
     this.chatRoomService.getAllChatRoomsByQuery(name).subscribe(data => {this.chatRooms = data; });
+  }
+  deleteChatRoom(roomId): void {
+    Swal.fire({
+      title: 'Do you want to delete the chat-room?',
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: `Yes`,
+      denyButtonText: `No`,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        this.chatRoomService.deleteChatRoom(roomId);
+        this.chatRooms.forEach( (cr, index) => {
+          if (cr.id === roomId) {
+            this.chatRooms.splice(index, 1);
+          }
+        } );
+        Swal.fire('Success', '', 'success');
+      } else if (result.isDenied) {
+        Swal.fire('\n' +
+          'The chat-room has not been deleted', '', '');
+      }
+    });
   }
 
 }

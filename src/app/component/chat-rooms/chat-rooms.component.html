@@ -62,7 +62,8 @@
       <div class="inbox_chat">
         <div class="channels" *ngFor="let room of chatRooms" (click)="setCurrentRoom(room)">
           <div class="chat_list">
-          <h5>{{room.name}}</h5>
+          <h5>{{room.name}}<button class="btn btn-navbar" (click)="deleteChatRoom(room.id)"><i class="fa fa-trash" aria-hidden="true"></i>
+          </button></h5>
           </div>
         </div>
       </div>
