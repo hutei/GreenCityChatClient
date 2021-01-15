@@ -57,7 +57,13 @@ export class SocketService {
       });
     }
     else {
+      if (this.getChatRoomDto().messages.length === 0) {
+        this.getChatRoomDto().messages.push(chatMsg);
+        return;
+      }
+      if (this.getChatRoomDto().messages[this.getChatRoomDto().messages.length - 1].id !== chatMsg.id) {
       this.getChatRoomDto().messages.push(chatMsg);
+      }
     }
   }
 
