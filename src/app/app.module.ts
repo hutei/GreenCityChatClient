@@ -35,7 +35,7 @@ import {MatInputModule} from '@angular/material/input';
     MatInputModule,
   ],
   entryComponents: [ModalComponent],
-  providers: [],
+  providers: [ChatRoomsComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
