@@ -7,7 +7,7 @@ import { ChatComponent } from './component/chat/chat.component';
 import {HttpClientModule} from '@angular/common/http';
 import {ChatMessagesComponent} from './component/chat-messages/chat-messages.component';
 import {ChatRoomsComponent} from './component/chat-rooms/chat-rooms.component';
-import {MatDialogModule} from '@angular/material/dialog';
+import {MatDialogModule, MAT_DIALOG_DEFAULT_OPTIONS} from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModalComponent } from './component/modal/modal.component';
 import {MatButtonModule} from '@angular/material/button';
@@ -21,8 +21,8 @@ import {MatInputModule} from '@angular/material/input';
     ChatComponent,
     ChatMessagesComponent,
     ChatRoomsComponent,
-    ModalComponent,
-  ],
+    ModalComponent
+    ],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -32,7 +32,7 @@ import {MatInputModule} from '@angular/material/input';
     MatButtonModule,
     MatFormFieldModule,
     ReactiveFormsModule,
-    MatInputModule,
+    MatInputModule
   ],
   entryComponents: [ModalComponent],
   providers: [ChatRoomsComponent],

@@ -4,6 +4,8 @@
 <div *ngFor="let participant of allParticipants">
   <h2>{{participant.name}}</h2>
 </div>-->
+<mat-dialog-content class="main">
+
   <table>
     <tr>
       <th colspan="2">Choose members:</th>
@@ -31,3 +33,5 @@
 <mat-dialog-actions>
   <button mat-button type="button" mat-dialog-close>Cancel</button>
 </mat-dialog-actions>
+
+</mat-dialog-content>

@@ -7,4 +7,5 @@ export class ChatRoomDto {
   public messages: ChatMessageDto[];
   public chatType: string;
   public participants: UserDto[];
+  public ownerId: number;
 }

@@ -88,7 +88,7 @@ export class ChatRoomsComponent implements OnInit {
   }
   openAddFileDialog(): void {
     this.chatRoomRef = this.dialog.open(ModalComponent, {
-      hasBackdrop: false
+      hasBackdrop: false,
     });
   }
   // tslint:disable-next-line:typedef
@@ -105,6 +105,13 @@ export class ChatRoomsComponent implements OnInit {
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
+        if(this.currentClickedRoom.ownerId !== this.currentUser.id) {
+          Swal.fire({
+            icon: 'error',
+            text: 'You are not owner of this chat',
+          });
+          return;
+        }
         this.chatRoomService.deleteChatRoom(roomId);
         this.chatRooms.forEach( (cr, index) => {
           if (cr.id === roomId) {
