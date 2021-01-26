@@ -18,7 +18,8 @@
           </form>
           
           <div class="dialog">
-          <button (click)="openAddFileDialog()" class="btn btn-navbar">Group Chat</button>
+          <!-- <button (click)="openAddFileDialog()" class="btn btn-navbar">Group Chat</button> -->
+          <button (click)="open(content)" class="btn btn-navbar">Group Chat</button>
           </div>
 
           <div class="btn-group dropright">
@@ -60,5 +61,35 @@
     </div>
 </div>
 </div>
+
+<ng-template #content let-modal>
+   <table class="table">
+    <tr>
+      <th colspan="2">Choose members:</th>
+      <th>Chat name:</th>
+    </tr>
+    <tr>
+      <td>
+    <div *ngFor="let participant of allParticipants" (click)="add(participant)">
+      {{participant.name}}
+    </div>
+      </td>
+      <td>
+        <div *ngFor="let part of list" (click)="remove(part)">
+        {{part.name}}
+        </div>
+      </td>
+      <td>
+        <form>
+          <input type="text" id="chatName">
+        <button (click)="createGroupChat()" class="btn btn-outline-dark">Create</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Cancel</button>
+        </form>
+      </td>
+    </tr>
+</table>  
+
+</ng-template>
+
 </div>
 

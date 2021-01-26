@@ -8,6 +8,7 @@ import {ModalComponent} from '../modal/modal.component';
 import { FormControl } from '@angular/forms';
 import {SocketService} from '../../service/socket/socket.service';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -20,14 +21,16 @@ export class ChatRoomsComponent implements OnInit {
 
   constructor(private userService: UserService, private chatRoomService: ChatRoomService,
               private dialog: MatDialog,
-              private  socketService: SocketService) {
+              private  socketService: SocketService,
+              private modalService: NgbModal) {
   }
   currentUser: UserDto;
   chatRooms = [];
+  closeResult: any;
 
   queryField: FormControl = new FormControl();
 
-
+  list: any;
   allParticipants: Array<UserDto>;
   privateChatRoom: ChatRoomDto;
   currentClickedRoom: ChatRoomDto;
@@ -36,6 +39,7 @@ export class ChatRoomsComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.list = [];
     this.getAllRooms();
     this.getCurrentUser();
     this.getAllParticipants();
@@ -105,7 +109,7 @@ export class ChatRoomsComponent implements OnInit {
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-        if(this.currentClickedRoom.ownerId !== this.currentUser.id) {
+        if(this.currentClickedRoom.ownerId !== this.currentUser.id && this.currentClickedRoom.chatType === 'GROUP') {
           Swal.fire({
             icon: 'error',
             text: 'You are not owner of this chat',
@@ -124,6 +128,41 @@ export class ChatRoomsComponent implements OnInit {
           'The chat-room has not been deleted', '', '');
       }
     });
+  }
+
+
+  open(content) {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+  
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
+  }
+
+  add(member): void {
+    this.list.push(member);
+  }
+  remove(member): void {
+    this.list.forEach( (msg, index) => {
+      if (msg.id === member.id) {
+        this.list.splice(index, 1); }
+    });
+  }
+  createGroupChat(): void {
+    // this.list.push(this.currentUser);
+    const name = (document.getElementById('chatName') as HTMLInputElement).value;
+    this.chatRoomService.createGroupChatRoom(this.list, name);
+    window.location.assign('/');
   }
 
 }
