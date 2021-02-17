@@ -54,6 +54,10 @@
   color: #E02616;
 }
 
+.fa-pencil-square {
+  color: #fdbd0d;
+}
+
 .chat_ib p {
   font-size: 14px;
   color: #989898;
@@ -84,4 +88,8 @@
   border-bottom: 1px solid black;
   font-family: sans-serif;
   color: black;
+}
+
+.btn-navbar:hover {
+  transform:scale(1.1,1.1);
 }

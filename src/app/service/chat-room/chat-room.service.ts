@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable} from 'rxjs';
-import {backendChatLink, participantLink} from '../../../links';
+import {backendChatLink, participantLink, leaveChatRoomLink, manageParticipantsChatRoomLink} from '../../../links';
 import { ChatRoomDto } from '../../model/chat-room/chat-room-dto.model';
 
 @Injectable({
@@ -37,5 +37,11 @@ export class ChatRoomService{
   }
   deleteChatRoom(roomId): void {
     this.http.delete(`${backendChatLink}` + `/delete/room/` + roomId).subscribe();
+  }
+  leaveChatRoom(room: any) {
+    this.http.post(`${leaveChatRoomLink}`,room).subscribe();
+  }
+  manageChatRoom(room: any) {
+    this.http.post(`${manageParticipantsChatRoomLink}`,room).subscribe();
   }
 }

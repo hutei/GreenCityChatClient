@@ -27,6 +27,9 @@ export class ChatRoomsComponent implements OnInit {
   currentUser: UserDto;
   chatRooms = [];
   closeResult: any;
+  model = {
+    chatName: ''
+  };
 
   queryField: FormControl = new FormControl();
 
@@ -132,7 +135,7 @@ export class ChatRoomsComponent implements OnInit {
 
 
   open(content) {
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', backdrop: 'static'}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
@@ -149,7 +152,7 @@ export class ChatRoomsComponent implements OnInit {
     }
   }
 
-  add(member): void {
+  add(member: any): void {
     this.list.push(member);
   }
   remove(member): void {
@@ -164,5 +167,69 @@ export class ChatRoomsComponent implements OnInit {
     this.chatRoomService.createGroupChatRoom(this.list, name);
     window.location.assign('/');
   }
+
+  viewGroupInfo(info, room) {
+    this.currentClickedRoom = room;
+    this.modalService.open(info, {ariaLabelledBy: 'modal-basic-title', backdrop: 'static'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+
+  rename(name, room) {
+    this.currentClickedRoom = room;
+    this.modalService.open(name, {ariaLabelledBy: 'modal-basic-title', backdrop: 'static'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+  renameGroupChat(room: any) {
+    room.name = this.model.chatName;
+    this.chatRoomService.manageChatRoom(room);
+    window.location.assign('/');
+  };
+
+  leaveGroupChat(id: number) {
+    let room = new ChatRoomDto();
+    this.chatRooms.forEach(r => {
+      if(r.id === id) {
+          room = r;
+        }
+    });
+    this.chatRoomService.leaveChatRoom(room);
+    window.location.assign('/');
+  }
+
+  removeParticipantsChatRoom(manage, room) {
+    this.currentClickedRoom = room;
+    this.list = this.currentClickedRoom.participants;
+    this.modalService.open(manage, {ariaLabelledBy: 'modal-basic-title', backdrop: 'static'}).result.then((result) => {
+      window.location.assign('/');
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      window.location.assign('/');
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+
+  addParticipantsChatRoom(manage2, room) {
+    this.currentClickedRoom = room;
+    this.modalService.open(manage2, {ariaLabelledBy: 'modal-basic-title', backdrop: 'static'}).result.then((result) => {
+      window.location.assign('/');
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      window.location.assign('/');
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+
+  manageChatRoom(members: UserDto[]) {
+    members.forEach(part => this.currentClickedRoom.participants.push(part));
+    this.chatRoomService.manageChatRoom(this.currentClickedRoom);
+    window.location.assign('/');
+  }
+
 
 }

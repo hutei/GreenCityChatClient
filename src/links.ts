@@ -10,3 +10,5 @@ export const currentUserLink = backendCoreLink + '/user';
 export const allParticipantsLink = backendChatLink + '/users';
 export const allParticipantsByQuery = allParticipantsLink + '/';
 
+export const leaveChatRoomLink = backendChatLink + '/room/leave';
+export const manageParticipantsChatRoomLink = backendChatLink + '/room/manage/participants';
