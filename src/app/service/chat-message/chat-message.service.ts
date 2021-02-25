@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {backendChatLink} from '../../../links';
 import {Observable} from 'rxjs';
@@ -10,7 +10,7 @@ import {ChatMessageDto} from '../../model/chat-message/chat-message-dto.model';*
 @Injectable({
   providedIn: 'root'
 })
-export class ChatMessageService{
+export class ChatMessageService {
 
   constructor(private http: HttpClient) {
   }

@@ -18,6 +18,9 @@
           <div class="received_msg">
             <div class="received_withd_msg">
               <p>{{ message.content }}</p>
+              <div *ngIf="message.imageName !== null">
+                <img src="http://localhost:8070/chat/image/{{message.imageName}}" alt="image"/>
+              </div>
             </div>
             <div class="btn-group dropright">
               <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -41,6 +44,9 @@
               </div>
             </div>
             <p>{{ message.content }}</p>
+            <div *ngIf="message.imageName !== null">
+              <img src="http://localhost:8070/chat/image/{{message.imageName}}" alt="image"/>
+            </div>
           </div>
         </div>
       </ng-template>
@@ -48,7 +54,7 @@
 </ul>
   </div>
   <div class="type_msg">
-    <form class="input_msg_w rite" (ngSubmit)="sendMessage()" (click)="sendMessage()">
+    <form class="input_msg_w rite" (ngSubmit)="sendMessage()">
       <label>
         <input
           type="text"
@@ -57,7 +63,9 @@
           name="newMessage"
           [(ngModel)]="newMessage">
       </label>
-      <button class="msg_send_btn" type="button">
+        <label class="file_choose_btn" for="exampleInputFile"><i class="fa fa-paperclip" aria-hidden="true" style="font-size:30px;color: #10804E;"></i></label>
+        <input type="file" name="file" (change)="fileChange($event)" class="msg_send_btn" id="exampleInputFile" aria-describedby="fileHelp">
+      <button class="msg_send_btn" type="button" (click)="sendMessage()">
         <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
       </button>
     </form>
