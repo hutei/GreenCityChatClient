@@ -19,13 +19,21 @@
             <div class="received_withd_msg">
               <p>{{ message.content }}</p>
             </div>
-            <div class="btn-group dropright">
+            <div *ngIf="room.chatType==='SYSTEM'
+                    then hide_btn
+                    else show_btn;">
+            </div>
+            <ng-template #hide_btn>
+            </ng-template>
+            <ng-template #show_btn >
+              <div class="btn-group dropright">
               <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <button class="dropdown-item btn-sm" (click)="deleteMessage(message.id)">Delete</button>
               </div>
             </div>
+            </ng-template>
           </div>
         </div>
       </ng-template>
@@ -47,21 +55,31 @@
     </li>
 </ul>
   </div>
-  <div class="type_msg">
-    <form class="input_msg_w rite" (ngSubmit)="sendMessage()" (click)="sendMessage()">
-      <label>
-        <input
-          type="text"
-          class="write_msg"
-          placeholder="Type a message"
-          name="newMessage"
-          [(ngModel)]="newMessage">
-      </label>
-      <button class="msg_send_btn" type="button">
-        <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-      </button>
-    </form>
+  <div *ngIf="room.chatType==='SYSTEM' && currentUser.role==='ROLE_USER'
+        then hide_msg
+        else show_msg;">
   </div>
+  <ng-template #hide_msg>
+    <div></div>
+  </ng-template>
+  <ng-template #show_msg>
+    <div class="type_msg">
+      <form class="input_msg_w rite" (ngSubmit)="sendMessage()" (click)="sendMessage()">
+        <label>
+          <input
+            type="text"
+            class="write_msg"
+            placeholder="Type a message"
+            name="newMessage"
+            [(ngModel)]="newMessage">
+        </label>
+        <button class="msg_send_btn" type="button">
+          <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+        </button>
+      </form>
+    </div>
+  </ng-template>
+
 
   </div>
 

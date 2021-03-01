@@ -5,5 +5,6 @@ export class UserDto {
   name: string;
   email: string;
   profilePicture: string;
+  role: string;
   rooms: ChatRoomDto[];
 }
