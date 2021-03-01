@@ -16,7 +16,7 @@
             </label>
             <button class="btn btn-navbar"><i class="fa fa-search"></i></button>
           </form>
-          
+
           <div class="dialog">
           <!-- <button (click)="openAddFileDialog()" class="btn btn-navbar">Group Chat</button> -->
           <button (click)="open(content)" class="btn btn-navbar">Group Chat</button>
@@ -41,14 +41,20 @@
             </div>
 
           </div>
-          
+
         </div>
       </div>
       <div class="inbox_chat">
         <div class="channels" *ngFor="let room of chatRooms.slice().reverse()">
           <div class="chat_list">
-          <h5  (click)="setCurrentRoom(room)">{{room.name}}<button class="btn btn-navbar" (click)="deleteChatRoom(room.id)"><i class="fa fa-trash" aria-hidden="true"></i>
-          </button>
+          <h5  (click)="setCurrentRoom(room)">{{room.name}}
+            <div *ngIf="room.chatType !== 'SYSTEM'">
+              <div>
+                  <button  class="btn btn-navbar" (click)="deleteChatRoom(room.id)">
+                  <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
         </h5>
           <div *ngIf="room.chatType === 'GROUP'">
           <div class="dropdown">
@@ -68,7 +74,7 @@
             </div>
           </div>
         </div>
-        
+
           </div>
         </div>
       </div>
@@ -113,7 +119,7 @@
         </form>
       </td>
     </tr>
-</table>  
+</table>
 </ng-template>
 
 
@@ -142,7 +148,7 @@
   </div>
   <form class="form-inline">
     <div class="form-group mx-sm-3 mb-2">
-      <input type="text" id="chatName" name="chatName" #chatName="ngModel" [(ngModel)]="model.chatName" #chatName 
+      <input type="text" id="chatName" name="chatName" #chatName="ngModel" [(ngModel)]="model.chatName" #chatName
       class="form-control" size="50" placeholder="Old name: {{currentClickedRoom.name}}">
     </div>
     <button type="submit" class="btn btn-outline-secondary" (click)="renameGroupChat(currentClickedRoom)">Rename</button>
@@ -169,7 +175,7 @@
         <!-- <td>
           <div *ngFor="let part of list" (click)="remove(part)">
           {{part.name}}
-          </div> 
+          </div>
         </td> -->
         <td>
           <button (click)="manageChatRoom(list)" class="btn btn-outline-dark">Save</button>
@@ -203,7 +209,7 @@
         <!-- <td>
           <div *ngFor="let part of list" (click)="remove(part)">
           {{part.name}}
-          </div> 
+          </div>
         </td> -->
         <td>
           <button (click)="manageChatRoom(list)" class="btn btn-outline-dark">Save</button>
