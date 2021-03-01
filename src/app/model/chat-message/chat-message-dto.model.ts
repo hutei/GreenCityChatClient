@@ -5,4 +5,5 @@ export class ChatMessageDto {
   public senderId: number;
   public status: string;
   public imageName: string;
+  public fileType: string;
 }
