@@ -7,6 +7,7 @@ import {DatePipe} from '@angular/common';
 import {ChatMessageService} from '../../service/chat-message/chat-message.service';
 import {ChatRoomService} from '../../service/chat-room/chat-room.service';
 import {ChatRoomsComponent} from '../chat-rooms/chat-rooms.component';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -21,6 +22,8 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   newMessage = '';
   webSocket: any;
   stompClient: any;
+  encodedString: string;
+  file: any;
 
   @Input() room: ChatRoomDto;
   @Input() currentUser: UserDto;
@@ -29,7 +32,8 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
               private datePipe: DatePipe,
               private chatMessageService: ChatMessageService,
               private chatRoomService: ChatRoomService,
-              private chatRoomComponent: ChatRoomsComponent) {
+              private chatRoomComponent: ChatRoomsComponent,
+              private http: HttpClient) {
   }
 
   ngOnInit(): void {
@@ -46,10 +50,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
 
   // tslint:disable-next-line:typedef
   async sendMessage() {
-    if (this.newMessage.trim() === '') {
-      return;
-    }
-    try {
+        try {
       this.socketService.setChatRoomDto(this.room);
       const chatMessage = new ChatMessageDto();
       ++ChatMessagesComponent.lastMessage;
@@ -57,8 +58,13 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
       chatMessage.content = this.newMessage;
       chatMessage.senderId = this.currentUser.id;
       chatMessage.roomId = this.room.id;
+      chatMessage.imageName = this.encodedString;
+      if (this.newMessage.trim() === '' && chatMessage.imageName === undefined) {
+        return;
+      }
       this.socketService.sendMessage(chatMessage);
       this.newMessage = '';
+      this.encodedString = undefined;
       if (this.room.messages.length === 0 && this.room.chatType === 'PRIVATE') {
         this.chatRoomComponent.chatRooms.push(this.room);
       }
@@ -92,4 +98,15 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   getLastMessageId(): void {
     this.chatMessageService.getLastMessageId().subscribe(data => {ChatMessagesComponent.lastMessage = data; } );
   }
+
+      fileChange(event) {
+        this.file = event.target.files[0];
+    ​var reader = new FileReader();
+    ​reader.onload = this._handleReaderLoaded.bind(this);
+    ​reader.readAsBinaryString(this.file);
+  }
+  ​_handleReaderLoaded(readerEvt) {
+    ​var binaryString = readerEvt.target.result;
+    ​this.encodedString = btoa(binaryString);  // Converting binary string data.
+}
 }

@@ -82,6 +82,14 @@ img {
   width: 33px;
 }
 
+.file_choose_btn {
+  border: medium none;
+  right: 40px;
+  position: absolute;
+  top: 11px;
+
+}
+
 .msg_history {
   height: 516px;
   overflow-y: auto;
