@@ -7,7 +7,9 @@ import {DatePipe} from '@angular/common';
 import {ChatMessageService} from '../../service/chat-message/chat-message.service';
 import {ChatRoomService} from '../../service/chat-room/chat-room.service';
 import {ChatRoomsComponent} from '../chat-rooms/chat-rooms.component';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ChatFileService } from 'src/app/service/chat-file/chat-file.service';
 
 
 @Component({
@@ -24,16 +26,18 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   stompClient: any;
   encodedString: string;
   file: any;
+  fileName: string;
+  fileType: string;
+
 
   @Input() room: ChatRoomDto;
   @Input() currentUser: UserDto;
   // tslint:disable-next-line:max-line-length
   constructor(private socketService: SocketService,
-              private datePipe: DatePipe,
               private chatMessageService: ChatMessageService,
-              private chatRoomService: ChatRoomService,
               private chatRoomComponent: ChatRoomsComponent,
-              private http: HttpClient) {
+              private formBuilder: FormBuilder,
+              private fileService: ChatFileService) {
   }
 
   ngOnInit(): void {
@@ -42,6 +46,9 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
     console.log(this.room.messages);
     this.socketService.setCurrentUser(this.currentUser);
     this.getLastMessageId();
+    this.uploadForm = this.formBuilder.group({
+      profile: ['']
+    });
   }
 
   ngOnDestroy(): void {
@@ -58,13 +65,13 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
       chatMessage.content = this.newMessage;
       chatMessage.senderId = this.currentUser.id;
       chatMessage.roomId = this.room.id;
-      chatMessage.imageName = this.encodedString;
+      chatMessage.imageName = this.fileName;
+      chatMessage.fileType = this.fileType;
       if (this.newMessage.trim() === '' && chatMessage.imageName === undefined) {
         return;
       }
       this.socketService.sendMessage(chatMessage);
       this.newMessage = '';
-      this.encodedString = undefined;
       if (this.room.messages.length === 0 && this.room.chatType === 'PRIVATE') {
         this.chatRoomComponent.chatRooms.push(this.room);
       }
@@ -99,7 +106,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
     this.chatMessageService.getLastMessageId().subscribe(data => {ChatMessagesComponent.lastMessage = data; } );
   }
 
-      fileChange(event) {
+      /*fileChange(event) {
         this.file = event.target.files[0];
     ​var reader = new FileReader();
     ​reader.onload = this._handleReaderLoaded.bind(this);
@@ -108,5 +115,25 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   ​_handleReaderLoaded(readerEvt) {
     ​var binaryString = readerEvt.target.result;
     ​this.encodedString = btoa(binaryString);  // Converting binary string data.
+}*/
+
+uploadForm: FormGroup;  
+
+
+onFileSelect(event) {
+  if (event.target.files.length > 0) {
+    const file = event.target.files[0];
+    this.uploadForm.get('profile').setValue(file);
+    const formData = new FormData();
+    formData.append('file', this.uploadForm.get('profile').value);
+    this.sendFile(formData);
+  }
+}
+
+sendFile(file: FormData): void {
+  this.fileService.sendFile(file).subscribe(data => {this.fileName = data.imageName; 
+    this.fileType = data.fileType;
+    console.log(data);
+  });
 }
 }
