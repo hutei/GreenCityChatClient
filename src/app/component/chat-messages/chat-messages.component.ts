@@ -65,9 +65,9 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
       chatMessage.content = this.newMessage;
       chatMessage.senderId = this.currentUser.id;
       chatMessage.roomId = this.room.id;
-      chatMessage.imageName = this.fileName;
+      chatMessage.fileName = this.fileName;
       chatMessage.fileType = this.fileType;
-      if (this.newMessage.trim() === '' && chatMessage.imageName === undefined) {
+      if (this.newMessage.trim() === '' && chatMessage.fileName === undefined) {
         return;
       }
       this.socketService.sendMessage(chatMessage);
@@ -131,7 +131,7 @@ onFileSelect(event) {
 }
 
 sendFile(file: FormData): void {
-  this.fileService.sendFile(file).subscribe(data => {this.fileName = data.imageName; 
+  this.fileService.sendFile(file).subscribe(data => {this.fileName = data.fileName; 
     this.fileType = data.fileType;
     console.log(data);
   });

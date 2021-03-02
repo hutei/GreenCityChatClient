@@ -18,9 +18,22 @@
           <div class="received_msg">
             <div class="received_withd_msg">
               <p>{{ message.content }}</p>
-              <div *ngIf="message.imageName !== null">
-                <img src="http://localhost:8070/chat/image/{{message.imageName}}" alt="image"/>
+              <!-- Show media -->
+            <div *ngIf="message.fileName !== null">
+              <div *ngIf="message.fileType === 'image'">
+                <img src="http://localhost:8070/chat/media/{{message.fileName}}" alt="image">
               </div>
+              <div *ngIf="message.fileType === 'video'">
+                <video width="260" controls>
+                  <source src="http://localhost:8070/chat/media/{{message.fileName}}">
+                  Your browser doesn't support HTML5 video tag.
+                </video>
+              </div>
+              <div *ngIf="message.fileType === 'doc'">
+                <a href="http://localhost:8070/chat/document/download/{{message.fileName}}">{{message.fileName}}</a>
+              </div>
+            </div>
+            <!-- End media -->
             </div>
             <div *ngIf="room.chatType==='SYSTEM'
                     then hide_btn
@@ -53,18 +66,18 @@
             </div>
             <p>{{ message.content }}</p>
             <!-- Show media -->
-            <div *ngIf="message.imageName !== null">
+            <div *ngIf="message.fileName !== null">
               <div *ngIf="message.fileType === 'image'">
-                <img src="http://localhost:8070/chat/media/{{message.imageName}}" alt="image">
+                <img src="http://localhost:8070/chat/media/{{message.fileName}}" alt="image">
               </div>
               <div *ngIf="message.fileType === 'video'">
                 <video width="260" controls>
-                  <source src="http://localhost:8070/chat/media/{{message.imageName}}">
+                  <source src="http://localhost:8070/chat/media/{{message.fileName}}">
                   Your browser doesn't support HTML5 video tag.
                 </video>
               </div>
               <div *ngIf="message.fileType === 'doc'">
-                <a href="http://localhost:8070/chat/document/download/{{message.imageName}}">{{message.imageName}}</a>
+                <a href="http://localhost:8070/chat/document/download/{{message.fileName}}">{{message.fileName}}</a>
               </div>
             </div>
             <!-- End media -->
@@ -74,7 +87,6 @@
     </li>
 </ul>
   </div>
-  
   <div *ngIf="room.chatType==='SYSTEM' && currentUser.role==='ROLE_USER'
         then hide_msg
         else show_msg;"></div>
@@ -107,14 +119,7 @@
             </form>
           </div>
         </ng-template>
-
-        
-  
-
-
-
-
-  </div>
+</div>
 
 
 
