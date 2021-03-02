@@ -74,53 +74,43 @@
     </li>
 </ul>
   </div>
+  
   <div *ngIf="room.chatType==='SYSTEM' && currentUser.role==='ROLE_USER'
         then hide_msg
-        else show_msg;">
-  <div class="type_msg">
-    <form class="input_msg_w rite" (ngSubmit)="sendMessage()">
-      <label>
-        <input
-          type="text"
-          class="write_msg"
-          placeholder="Type a message"
-          name="newMessage"
-          [(ngModel)]="newMessage">
-      </label>
-        <!-- <label class="file_choose_btn" for="exampleInputFile"><i class="fa fa-paperclip" aria-hidden="true" style="font-size:30px;color: #10804E;"></i></label>
-        <input type="file" name="file" (change)="fileChange($event)" class="msg_send_btn" id="exampleInputFile" aria-describedby="fileHelp"> -->
+        else show_msg;"></div>
+        <ng-template #hide_msg>
+          <div></div>
+        </ng-template>
+        <ng-template #show_msg>
+          <div class="type_msg">
+            <form class="input_msg_w rite" (ngSubmit)="sendMessage()">
+              <label>
+                <input
+                  type="text"
+                  class="write_msg"
+                  placeholder="Type a message"
+                  name="newMessage"
+                  [(ngModel)]="newMessage">
+              </label>
+                <!-- <label class="file_choose_btn" for="exampleInputFile"><i class="fa fa-paperclip" aria-hidden="true" style="font-size:30px;color: #10804E;"></i></label>
+                <input type="file" name="file" (change)="fileChange($event)" class="msg_send_btn" id="exampleInputFile" aria-describedby="fileHelp"> -->
+                
+                <div>
+                    <div>
+                      <input type="file" name="profile" (change)="onFileSelect($event)" />
+                    </div>
+                </div>
         
-        <div>
-            <div>
-              <input type="file" name="profile" (change)="onFileSelect($event)" />
-            </div>
-        </div>
+              <button class="msg_send_btn" type="button" (click)="sendMessage()">
+                <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+              </button>
+            </form>
+          </div>
+        </ng-template>
 
-      <button class="msg_send_btn" type="button" (click)="sendMessage()">
-        <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-      </button>
-    </form>
-  </div>
-  <ng-template #hide_msg>
-    <div></div>
-  </ng-template>
-  <ng-template #show_msg>
-    <div class="type_msg">
-      <form class="input_msg_w rite" (ngSubmit)="sendMessage()" (click)="sendMessage()">
-        <label>
-          <input
-            type="text"
-            class="write_msg"
-            placeholder="Type a message"
-            name="newMessage"
-            [(ngModel)]="newMessage">
-        </label>
-        <button class="msg_send_btn" type="button">
-          <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-        </button>
-      </form>
-    </div>
-  </ng-template>
+        
+  
+
 
 
 
