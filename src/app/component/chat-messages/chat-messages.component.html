@@ -50,7 +50,16 @@
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <button class="dropdown-item btn-sm" (click)="deleteMessage(message.id)">Delete</button>
-                <button class="dropdown-item btn-sm" (click)="likeMessage(message.id)">Like</button>
+                <div *ngIf="message.likedUserId.includes(currentUser.id)
+                    then dislike_btn
+                    else like_btn;">
+                </div>
+                <ng-template #dislike_btn >
+                  <button class="dropdown-item btn-sm" (click)="likeMessage(message.id)"><i  style="color: #E02616" class="fas fa-heart"></i></button>
+                </ng-template>
+                <ng-template #like_btn >
+                  <button class="dropdown-item btn-sm" (click)="likeMessage(message.id)"><i style="color: #E02616" class="far fa-heart"></i></button>
+                </ng-template>
               </div>
             </div>
             </ng-template>
