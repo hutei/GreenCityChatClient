@@ -5,11 +5,13 @@ import {SocketService} from '../../service/socket/socket.service';
 import {ChatMessageDto} from '../../model/chat-message/chat-message-dto.model';
 import {DatePipe} from '@angular/common';
 import {ChatMessageService} from '../../service/chat-message/chat-message.service';
-import {ChatRoomService} from '../../service/chat-room/chat-room.service';
 import {ChatRoomsComponent} from '../chat-rooms/chat-rooms.component';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ChatFileService } from 'src/app/service/chat-file/chat-file.service';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {ChatFileService} from 'src/app/service/chat-file/chat-file.service';
+
+declare var $: any;
+import * as RecordRTC from 'recordrtc';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 @Component({
@@ -19,6 +21,17 @@ import { ChatFileService } from 'src/app/service/chat-file/chat-file.service';
   providers: [DatePipe],
 })
 export class ChatMessagesComponent implements OnInit, OnDestroy {
+
+  title = 'micRecorder';
+//Lets declare Record OBJ
+  record;
+//Will use this flag for toggeling recording
+  recording = false;
+//URL of Blob
+  url;
+  error;
+
+
 
   static lastMessage: number;
   newMessage = '';
@@ -37,7 +50,8 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
               private chatMessageService: ChatMessageService,
               private chatRoomComponent: ChatRoomsComponent,
               private formBuilder: FormBuilder,
-              private fileService: ChatFileService) {
+              private fileService: ChatFileService,
+              private domSanitizer: DomSanitizer) {
   }
 
   ngOnInit(): void {
@@ -117,7 +131,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
     ​this.encodedString = btoa(binaryString);  // Converting binary string data.
 }*/
 
-uploadForm: FormGroup;  
+uploadForm: FormGroup;
 
 
 onFileSelect(event) {
@@ -131,9 +145,91 @@ onFileSelect(event) {
 }
 
 sendFile(file: FormData): void {
-  this.fileService.sendFile(file).subscribe(data => {this.fileName = data.fileName; 
+  console.log("&&&&&&&&&&&&");
+  console.log(file);
+  this.fileService.sendFile(file).subscribe(data => {this.fileName = data.fileName;
     this.fileType = data.fileType;
     console.log(data);
   });
 }
+
+
+  sanitize(url: string) {
+    return this.domSanitizer.bypassSecurityTrustUrl(url);
+  }
+  /**
+   * Start recording.
+   */
+  initiateRecording() {
+    this.recording = true;
+    let mediaConstraints = {
+      video: false,
+      audio: true
+    };
+    navigator.mediaDevices.getUserMedia(mediaConstraints).then(this.successCallback.bind(this), this.errorCallback.bind(this));
+  }
+  /**
+   * Will be called automatically.
+   */
+  successCallback(stream) {
+    var options = {
+      mimeType: "audio/wav",
+      numberOfAudioChannels: 1,
+      sampleRate: 45000, // швидкість відтворення
+    };
+//Start Actuall Recording
+    var StereoAudioRecorder = RecordRTC.StereoAudioRecorder;
+    this.record = new StereoAudioRecorder(stream, options);
+    this.record.record();
+  }
+  /**
+   * Stop recording.
+   */
+  stopRecording() {
+    this.recording = false;
+
+     this.record.stop(this.processRecording.bind(this));
+
+     //спробував витягти  масив
+    //  var buffer = this.record.buffer;
+    // console.log("!!!!!!!!!!!!!");
+    // console.log(buffer);
+
+  }
+  /**
+   * processRecording Do what ever you want with blob
+   * @param  {any} blob Blog
+   */
+  bl: any;
+  method(){
+    console.log("METHODDATA");
+    // const text = this.bl.text();
+    // console.log(text);
+    console.log(this.bl);
+    // const arrayBuffer = this.bl.arrayBuffer();
+    // console.log(arrayBuffer);
+
+    this.fileService.sendvoiceMessageFile(this.bl).subscribe(data=>{
+
+      console.log(data);
+    });
+  }
+  processRecording(blob) {
+    console.log("1111111111");
+    console.log(blob);
+    this.url = URL.createObjectURL(blob);
+
+    console.log("blob", blob);
+    console.log("url", this.url);
+  }
+  /**
+   * Process Error.
+   */
+  errorCallback(error) {
+    this.error = 'Can not play audio in your browser';
+  }
+
+
+
+
 }

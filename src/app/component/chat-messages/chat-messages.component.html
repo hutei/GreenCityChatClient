@@ -32,6 +32,12 @@
               <div *ngIf="message.fileType === 'doc'">
                 <a href="http://localhost:8070/chat/document/download/{{message.fileName}}">{{message.fileName}}</a>
               </div>
+              <div *ngIf="message.fileType === 'audio' " >
+                <audio width="260" controls>
+                  <source src="http://localhost:8070/chat/media/{{message.fileName}}" type="audio/mpeg" >
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
             </div>
             <!-- End media -->
             </div>
@@ -79,6 +85,12 @@
               <div *ngIf="message.fileType === 'doc'">
                 <a href="http://localhost:8070/chat/document/download/{{message.fileName}}">{{message.fileName}}</a>
               </div>
+              <div *ngIf="message.fileType === 'audio' " >
+                <audio style="width:260px;"  controls>
+                  <source src="http://localhost:8070/chat/media/{{message.fileName}}" type="audio/mpeg" >
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
             </div>
             <!-- End media -->
           </div>
@@ -106,19 +118,28 @@
               </label>
                 <!-- <label class="file_choose_btn" for="exampleInputFile"><i class="fa fa-paperclip" aria-hidden="true" style="font-size:30px;color: #10804E;"></i></label>
                 <input type="file" name="file" (change)="fileChange($event)" class="msg_send_btn" id="exampleInputFile" aria-describedby="fileHelp"> -->
-                
+
                 <div>
                     <div>
                       <input type="file" name="profile" (change)="onFileSelect($event)" />
                     </div>
                 </div>
-        
+
               <button class="msg_send_btn" type="button" (click)="sendMessage()">
                 <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
               </button>
+
             </form>
           </div>
         </ng-template>
+<div>
+  <button (click)="initiateRecording()" class="btn btn-primary" *ngIf="!recording" style="cursor: pointer;background-color: green;color: white;font-size: 40px;"> Start Recording </button>
+  <button (click)="stopRecording()" class="btn btn-danger" *ngIf="recording" style="cursor: pointer;background-color: red;color: white;font-size: 40px;"> Stop Recording </button>
+  <audio controls="" *ngIf="url">
+    <source [src]="sanitize(url)" type="audio/wav">
+  </audio>
+</div>
+  <div><button (click)="method()" >SEND</button></div>
 </div>
 
 

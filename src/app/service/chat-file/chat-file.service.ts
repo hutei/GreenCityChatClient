@@ -7,11 +7,17 @@ import { Observable } from "rxjs";
     providedIn: 'root'
   })
   export class ChatFileService {
-  
+
     constructor(private http: HttpClient) {
     }
-    
+
     sendFile(body: FormData): Observable<any> {
         return this.http.post<any>('http://localhost:8070/chat/upload/file', body);
     }
+  sendvoiceMessageFile(body: any): Observable<any> {
+    return this.http.post<any>('http://localhost:8070/chat/upload/file', body);
+  }
+  sendVoiseMEssageInUrl(url: string): Observable<any>{
+      return this.http.post<any>(url, null);
+  }
   }
