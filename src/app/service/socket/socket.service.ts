@@ -8,6 +8,7 @@ import {UserDto} from '../../model/user/user-dto.model';
 import {ChatRoomDto} from '../../model/chat-room/chat-room-dto.model';
 import {ChatRoomService} from '../chat-room/chat-room.service';
 import {ChatRoomsComponent} from '../../component/chat-rooms/chat-rooms.component';
+import {MessageLike} from "../../model/chat-message/message-like";
 
 
 @Injectable({
@@ -108,6 +109,10 @@ export class SocketService {
   }
   setAllRooms(chatRooms: ChatRoomDto[]): void {
     this.chatRooms = chatRooms;
+  }
+
+  likeMessage = (messageLike: MessageLike) => {
+    this.stompClient.send('/app/chat/like', {}, JSON.stringify(messageLike));
   }
 }
 

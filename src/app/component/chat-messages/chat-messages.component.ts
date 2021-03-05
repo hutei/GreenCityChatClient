@@ -10,6 +10,7 @@ import {ChatRoomsComponent} from '../chat-rooms/chat-rooms.component';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChatFileService } from 'src/app/service/chat-file/chat-file.service';
+import {MessageLike} from "../../model/chat-message/message-like";
 
 
 @Component({
@@ -102,6 +103,12 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
       this.socketService.updateMessage(this.room.messages[index]); }
     });
   }
+  likeMessage(messageId):void{
+    const messageLike = new MessageLike();
+    messageLike.messageId = messageId;
+    messageLike.participantId = this.currentUser.id;
+    this.socketService.likeMessage(messageLike);
+  }
   getLastMessageId(): void {
     this.chatMessageService.getLastMessageId().subscribe(data => {ChatMessagesComponent.lastMessage = data; } );
   }
@@ -117,7 +124,7 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
     ​this.encodedString = btoa(binaryString);  // Converting binary string data.
 }*/
 
-uploadForm: FormGroup;  
+uploadForm: FormGroup;
 
 
 onFileSelect(event) {
@@ -131,7 +138,7 @@ onFileSelect(event) {
 }
 
 sendFile(file: FormData): void {
-  this.fileService.sendFile(file).subscribe(data => {this.fileName = data.fileName; 
+  this.fileService.sendFile(file).subscribe(data => {this.fileName = data.fileName;
     this.fileType = data.fileType;
     console.log(data);
   });
