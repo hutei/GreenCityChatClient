@@ -17,9 +17,11 @@
           </div>
           <div class="received_msg">
             <div class="received_withd_msg">
-              <p>{{ message.content }}</p>
+              <div *ngIf="message.fileType === null" >
+                <p>{{ message.content }}</p>
+              </div>
               <!-- Show media -->
-            <div *ngIf="message.fileName !== null">
+            <div *ngIf="message.fileType !== null">
               <div *ngIf="message.fileType === 'image'">
                 <img src="http://localhost:8070/chat/media/{{message.fileName}}" alt="image">
               </div>
@@ -33,7 +35,7 @@
                 <a href="http://localhost:8070/chat/document/download/{{message.fileName}}">{{message.fileName}}</a>
               </div>
               <div *ngIf="message.fileType === 'audio' " >
-                <audio width="260" controls>
+                <audio style="width:260px;"  controls>
                   <source src="http://localhost:8070/chat/media/{{message.fileName}}" type="audio/mpeg" >
                   Your browser does not support the audio element.
                 </audio>
@@ -70,9 +72,11 @@
                 <button class="dropdown-item btn-sm" (click)="updateMessage(message.id, message.content)">Update</button>
               </div>
             </div>
-            <p>{{ message.content }}</p>
+            <div *ngIf="message.fileType === null" >
+              <p>{{ message.content }}</p>
+            </div>
             <!-- Show media -->
-            <div *ngIf="message.fileName !== null">
+            <div *ngIf="message.fileType !== null">
               <div *ngIf="message.fileType === 'image'">
                 <img src="http://localhost:8070/chat/media/{{message.fileName}}" alt="image">
               </div>
@@ -124,23 +128,24 @@
                       <input type="file" name="profile" (change)="onFileSelect($event)" />
                     </div>
                 </div>
+              <div *ngIf="showVoiceMessageName" class="msg_voice_file_name">
+                <p>Голосове повідомлення
+                  <button  (click)="deleteVoiceMessage()" class="msg_delete_voice_btn" >
+                    <i  class="fa fa-times"></i>
+                  </button>
+                </p>
+
+              </div>
+
+              <button id="msg_voice_btn_id" class="msg_voice" (mousedown)="initiateRecording()" (mouseup)="stopRecording()" >
+                <i class="fa fa-microphone" aria-hidden="true"></i>
+              </button>
 
               <button class="msg_send_btn" type="button" (click)="sendMessage()">
                 <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
               </button>
-
             </form>
+
           </div>
         </ng-template>
-<div>
-  <button (click)="initiateRecording()" class="btn btn-primary" *ngIf="!recording" style="cursor: pointer;background-color: green;color: white;font-size: 40px;"> Start Recording </button>
-  <button (click)="stopRecording()" class="btn btn-danger" *ngIf="recording" style="cursor: pointer;background-color: red;color: white;font-size: 40px;"> Stop Recording </button>
-  <audio controls="" *ngIf="url">
-    <source [src]="sanitize(url)" type="audio/wav">
-  </audio>
 </div>
-  <div><button (click)="method()" >SEND</button></div>
-</div>
-
-
-

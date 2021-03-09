@@ -21,30 +21,6 @@ import { DomSanitizer } from '@angular/platform-browser';
   providers: [DatePipe],
 })
 export class ChatMessagesComponent implements OnInit, OnDestroy {
-
-  title = 'micRecorder';
-//Lets declare Record OBJ
-  record;
-//Will use this flag for toggeling recording
-  recording = false;
-//URL of Blob
-  url;
-  error;
-
-
-
-  static lastMessage: number;
-  newMessage = '';
-  webSocket: any;
-  stompClient: any;
-  encodedString: string;
-  file: any;
-  fileName: string;
-  fileType: string;
-
-
-  @Input() room: ChatRoomDto;
-  @Input() currentUser: UserDto;
   // tslint:disable-next-line:max-line-length
   constructor(private socketService: SocketService,
               private chatMessageService: ChatMessageService,
@@ -53,6 +29,39 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
               private fileService: ChatFileService,
               private domSanitizer: DomSanitizer) {
   }
+  static lastMessage: number;
+
+// Record OBJ
+  record;
+// Will use this flag for toggeling recording
+  recording = false;
+
+  error;
+  newMessage = '';
+  webSocket: any;
+  stompClient: any;
+  encodedString: string;
+  file: any;
+  fileName: string;
+  fileType: string;
+  showVoiceMessageName: boolean;
+
+
+  @Input() room: ChatRoomDto;
+  @Input() currentUser: UserDto;
+
+      /*fileChange(event) {
+        this.file = event.target.files[0];
+    ​var reader = new FileReader();
+    ​reader.onload = this._handleReaderLoaded.bind(this);
+    ​reader.readAsBinaryString(this.file);
+  }
+  ​_handleReaderLoaded(readerEvt) {
+    ​var binaryString = readerEvt.target.result;
+    ​this.encodedString = btoa(binaryString);  // Converting binary string data.
+}*/
+
+uploadForm: FormGroup;
 
   ngOnInit(): void {
     this.socketService.setChatRoomDto(this.room);
@@ -92,6 +101,9 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
     } catch (err) {
       console.log(err);
     }
+        this.fileName = null;
+        this.fileType = null;
+        this.showVoiceMessageName = false;
   }
   deleteMessage(messageId): void {
     this.socketService.setChatRoomDto(this.room);
@@ -120,19 +132,6 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
     this.chatMessageService.getLastMessageId().subscribe(data => {ChatMessagesComponent.lastMessage = data; } );
   }
 
-      /*fileChange(event) {
-        this.file = event.target.files[0];
-    ​var reader = new FileReader();
-    ​reader.onload = this._handleReaderLoaded.bind(this);
-    ​reader.readAsBinaryString(this.file);
-  }
-  ​_handleReaderLoaded(readerEvt) {
-    ​var binaryString = readerEvt.target.result;
-    ​this.encodedString = btoa(binaryString);  // Converting binary string data.
-}*/
-
-uploadForm: FormGroup;
-
 
 onFileSelect(event) {
   if (event.target.files.length > 0) {
@@ -145,40 +144,38 @@ onFileSelect(event) {
 }
 
 sendFile(file: FormData): void {
-  console.log("&&&&&&&&&&&&");
   console.log(file);
   this.fileService.sendFile(file).subscribe(data => {this.fileName = data.fileName;
-    this.fileType = data.fileType;
-    console.log(data);
+                                                     this.fileType = data.fileType;
+                                                     console.log(data);
   });
 }
-
-
   sanitize(url: string) {
-    return this.domSanitizer.bypassSecurityTrustUrl(url);
+  return this.domSanitizer.bypassSecurityTrustUrl(url);
   }
   /**
    * Start recording.
    */
   initiateRecording() {
     this.recording = true;
-    let mediaConstraints = {
+    const mediaConstraints = {
       video: false,
       audio: true
     };
+    document.getElementById('msg_voice_btn_id').style.backgroundColor = 'red';
     navigator.mediaDevices.getUserMedia(mediaConstraints).then(this.successCallback.bind(this), this.errorCallback.bind(this));
   }
   /**
    * Will be called automatically.
    */
   successCallback(stream) {
-    var options = {
-      mimeType: "audio/wav",
+    const options = {
+      mimeType: 'audio/wav',
       numberOfAudioChannels: 1,
       sampleRate: 45000, // швидкість відтворення
     };
-//Start Actuall Recording
-    var StereoAudioRecorder = RecordRTC.StereoAudioRecorder;
+// Start Actuall Recording
+    const StereoAudioRecorder = RecordRTC.StereoAudioRecorder;
     this.record = new StereoAudioRecorder(stream, options);
     this.record.record();
   }
@@ -187,40 +184,22 @@ sendFile(file: FormData): void {
    */
   stopRecording() {
     this.recording = false;
-
-     this.record.stop(this.processRecording.bind(this));
-
-     //спробував витягти  масив
-    //  var buffer = this.record.buffer;
-    // console.log("!!!!!!!!!!!!!");
-    // console.log(buffer);
+    this.record.stop(this.processRecording.bind(this));
+    document.getElementById('msg_voice_btn_id').style.backgroundColor = '#10804E';
 
   }
-  /**
-   * processRecording Do what ever you want with blob
-   * @param  {any} blob Blog
-   */
-  bl: any;
-  method(){
-    console.log("METHODDATA");
-    // const text = this.bl.text();
-    // console.log(text);
-    console.log(this.bl);
-    // const arrayBuffer = this.bl.arrayBuffer();
-    // console.log(arrayBuffer);
 
-    this.fileService.sendvoiceMessageFile(this.bl).subscribe(data=>{
 
+  processRecording(blob) {
+    console.log(blob);
+    const  formData  = new FormData();
+    formData.append('file', blob);
+    this.fileService.sendVoiceFile(formData, this.room.id, this.currentUser.id).subscribe(data => {
+      this.fileName = data.fileName;
+      this.fileType = data.fileType;
+      this.showVoiceMessageName = true;
       console.log(data);
     });
-  }
-  processRecording(blob) {
-    console.log("1111111111");
-    console.log(blob);
-    this.url = URL.createObjectURL(blob);
-
-    console.log("blob", blob);
-    console.log("url", this.url);
   }
   /**
    * Process Error.
@@ -228,8 +207,14 @@ sendFile(file: FormData): void {
   errorCallback(error) {
     this.error = 'Can not play audio in your browser';
   }
+  deleteVoiceMessage(){
+    this.fileService.deleteVoice(this.fileName).subscribe(data => {
+      console.log(data);
+    });
+    this.fileName = null;
+    this.fileType = null;
 
-
+  }
 
 
 }
