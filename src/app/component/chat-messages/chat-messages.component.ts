@@ -215,6 +215,13 @@ sendFile(file: FormData): void {
     this.fileType = null;
 
   }
+  recordVoiceMessage(){
+    if( !this.recording ){
+      this.initiateRecording();
+    }else {
+      this.stopRecording();
+    }
+  }
 
 
 }
