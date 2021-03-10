@@ -111,7 +111,7 @@
         </ng-template>
         <ng-template #show_msg>
           <div class="type_msg">
-            <form class="input_msg_w rite" (ngSubmit)="sendMessage()">
+            <form class="input_msg_w rite" > <!--(ngSubmit)="sendMessage()"-->
               <label>
                 <input
                   type="text"
@@ -123,10 +123,15 @@
                 <!-- <label class="file_choose_btn" for="exampleInputFile"><i class="fa fa-paperclip" aria-hidden="true" style="font-size:30px;color: #10804E;"></i></label>
                 <input type="file" name="file" (change)="fileChange($event)" class="msg_send_btn" id="exampleInputFile" aria-describedby="fileHelp"> -->
 
-                <div>
-                    <div>
-                      <input type="file" name="profile" (change)="onFileSelect($event)" />
-                    </div>
+              <div  class="file-select-name">
+                <div id="file-select-id" ></div>
+                <button  (click)="deleteFile()" class="file-select-delete-icon" >
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+                <div class="add-file-to-msg">
+                      <label for="file-upload" ><i class="fa fa-paperclip"></i></label>
+                      <input id="file-upload" name ="file-upload" type="file" name="profile" (change)="onFileSelect($event)"  hidden />
                 </div>
               <div *ngIf="showVoiceMessageName" class="msg_voice_file_name">
                 <p>Голосове повідомлення
@@ -134,17 +139,20 @@
                     <i  class="fa fa-times"></i>
                   </button>
                 </p>
-
               </div>
 
-              <button id="msg_voice_btn_id" class="msg_voice" (click)="recordVoiceMessage()" >
-                <i class="fa fa-microphone" aria-hidden="true"></i>
-              </button>
+              <div class="spin-container" *ngIf="spiner">
+                <div class="spin"></div>
+              </div>
 
-              <button class="msg_send_btn" type="button" (click)="sendMessage()">
+
+              <button class="msg_send_btn" type="button" (click)="sendMessage()" [disabled]="sendBtnDisabled">
                 <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
               </button>
             </form>
+            <button id="msg_voice_btn_id" class="msg_voice" (click)="recordVoiceMessage()" >
+              <i class="fa fa-microphone" aria-hidden="true"></i>
+            </button>
 
           </div>
         </ng-template>

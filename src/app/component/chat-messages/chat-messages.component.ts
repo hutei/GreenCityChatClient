@@ -30,6 +30,9 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
               private domSanitizer: DomSanitizer) {
   }
   static lastMessage: number;
+  spiner: boolean;
+  sendBtnDisabled: boolean;
+  nameFileHide: boolean;
 
 // Record OBJ
   record;
@@ -137,6 +140,7 @@ onFileSelect(event) {
   if (event.target.files.length > 0) {
     const file = event.target.files[0];
     this.uploadForm.get('profile').setValue(file);
+    document.getElementById('file-select-id').innerText = this.uploadForm.get('profile').value.name;
     const formData = new FormData();
     formData.append('file', this.uploadForm.get('profile').value);
     this.sendFile(formData);
@@ -144,10 +148,16 @@ onFileSelect(event) {
 }
 
 sendFile(file: FormData): void {
+    this.spiner = true;
+    this.sendBtnDisabled = true;
+    this.nameFileHide = false;
   console.log(file);
   this.fileService.sendFile(file).subscribe(data => {this.fileName = data.fileName;
                                                      this.fileType = data.fileType;
                                                      console.log(data);
+                                                     this.spiner = false;
+                                                     this.sendBtnDisabled = false;
+
   });
 }
   sanitize(url: string) {
@@ -191,14 +201,18 @@ sendFile(file: FormData): void {
 
 
   processRecording(blob) {
+    this.spiner = true;
+    this.sendBtnDisabled = true;
     console.log(blob);
     const  formData  = new FormData();
     formData.append('file', blob);
-    this.fileService.sendVoiceFile(formData, this.room.id, this.currentUser.id).subscribe(data => {
+    this.fileService.sendVoiceFile(formData).subscribe(data => {
       this.fileName = data.fileName;
       this.fileType = data.fileType;
       this.showVoiceMessageName = true;
       console.log(data);
+      this.spiner = false;
+      this.sendBtnDisabled = false;
     });
   }
   /**
@@ -208,12 +222,21 @@ sendFile(file: FormData): void {
     this.error = 'Can not play audio in your browser';
   }
   deleteVoiceMessage(){
-    this.fileService.deleteVoice(this.fileName).subscribe(data => {
+    this.fileService.deleteFile(this.fileName).subscribe(data => {
       console.log(data);
     });
     this.fileName = null;
     this.fileType = null;
-
+  }
+  deleteFile(){
+    this.fileService.deleteFile(this.fileName).subscribe(data=>{
+      console.log(data);
+    });
+    this.fileName = null;
+    this.fileType = null;
+    document.getElementById('file-upload').nodeValue = '';
+    document.getElementById('file-select-id').innerText = '';
+    this.nameFileHide = true;
   }
   recordVoiceMessage(){
     if( !this.recording ){

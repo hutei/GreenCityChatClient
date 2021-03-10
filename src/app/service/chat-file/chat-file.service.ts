@@ -7,13 +7,7 @@ import { Observable } from "rxjs";
     providedIn: 'root'
   })
   export class ChatFileService {
-  // headers: {
-  //   'Content-Type': 'multipart/form-data' };
-  // httpOptions = {
-  //   headers: new HttpHeaders({
-  //     'Content-Type':  'audio/wav'
-  //   })
-  // };
+
   constructor(private http: HttpClient) {
   }
 
@@ -21,12 +15,12 @@ import { Observable } from "rxjs";
     return this.http.post<any>('http://localhost:8070/chat/upload/file', body);
   }
 
-  sendVoiceFile(body: FormData, roomId, userId): Observable<any> {
+  sendVoiceFile(body: FormData): Observable<any> {
     return this.http.post<any>('http://localhost:8070/chat/upload/voice/', body);
   }
 
-  deleteVoice(fileName) {
-    return this.http.delete('http://localhost:8070/chat/delete/voice/' + fileName);
+  deleteFile(fileName) {
+    return this.http.delete('http://localhost:8070/chat/delete/file/' + fileName);
   }
 }
 
