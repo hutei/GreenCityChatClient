@@ -131,6 +131,12 @@ uploadForm: FormGroup;
       this.socketService.updateMessage(this.room.messages[index]); }
     });
   }
+  likeMessage(messageId):void{
+    const messageLike = new MessageLike();
+    messageLike.messageId = messageId;
+    messageLike.participantId = this.currentUser.id;
+    this.socketService.likeMessage(messageLike);
+  }
   getLastMessageId(): void {
     this.chatMessageService.getLastMessageId().subscribe(data => {ChatMessagesComponent.lastMessage = data; } );
   }
