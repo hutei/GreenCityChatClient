@@ -12,6 +12,7 @@ import {ChatFileService} from 'src/app/service/chat-file/chat-file.service';
 declare var $: any;
 import * as RecordRTC from 'recordrtc';
 import { DomSanitizer } from '@angular/platform-browser';
+import {MessageLike} from "../../model/chat-message/message-like";
 
 
 @Component({
