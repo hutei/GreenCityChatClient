@@ -17,15 +17,47 @@
           </div>
           <div class="received_msg">
             <div class="received_withd_msg">
-              <p>{{ message.content }}</p>
+              <div *ngIf="message.fileType === null" >
+                <p>{{ message.content }}</p>
+              </div>
+              <!-- Show media -->
+            <div *ngIf="message.fileType !== null">
+              <div *ngIf="message.fileType === 'image'">
+                <img src="http://localhost:8070/chat/media/{{message.fileName}}" alt="image">
+              </div>
+              <div *ngIf="message.fileType === 'video'">
+                <video width="260" controls>
+                  <source src="http://localhost:8070/chat/media/{{message.fileName}}">
+                  Your browser doesn't support HTML5 video tag.
+                </video>
+              </div>
+              <div *ngIf="message.fileType === 'doc'">
+                <a href="http://localhost:8070/chat/document/download/{{message.fileName}}">{{message.fileName}}</a>
+              </div>
+              <div *ngIf="message.fileType === 'audio' " >
+                <audio style="width:260px;"  controls>
+                  <source src="http://localhost:8070/chat/media/{{message.fileName}}" type="audio/mpeg" >
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
             </div>
-            <div class="btn-group dropright">
+            <!-- End media -->
+            </div>
+            <div *ngIf="room.chatType==='SYSTEM'
+                    then hide_btn
+                    else show_btn;">
+            </div>
+            <ng-template #hide_btn>
+            </ng-template>
+            <ng-template #show_btn >
+              <div class="btn-group dropright">
               <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <button class="dropdown-item btn-sm" (click)="deleteMessage(message.id)">Delete</button>
               </div>
             </div>
+            </ng-template>
           </div>
         </div>
       </ng-template>
@@ -40,30 +72,88 @@
                 <button class="dropdown-item btn-sm" (click)="updateMessage(message.id, message.content)">Update</button>
               </div>
             </div>
-            <p>{{ message.content }}</p>
+            <div *ngIf="message.fileType === null" >
+              <p>{{ message.content }}</p>
+            </div>
+            <!-- Show media -->
+            <div *ngIf="message.fileType !== null">
+              <div *ngIf="message.fileType === 'image'">
+                <img src="http://localhost:8070/chat/media/{{message.fileName}}" alt="image">
+              </div>
+              <div *ngIf="message.fileType === 'video'">
+                <video width="260" controls>
+                  <source src="http://localhost:8070/chat/media/{{message.fileName}}">
+                  Your browser doesn't support HTML5 video tag.
+                </video>
+              </div>
+              <div *ngIf="message.fileType === 'doc'">
+                <a href="http://localhost:8070/chat/document/download/{{message.fileName}}">{{message.fileName}}</a>
+              </div>
+              <div *ngIf="message.fileType === 'audio' " >
+                <audio style="width:260px;"  controls>
+                  <source src="http://localhost:8070/chat/media/{{message.fileName}}" type="audio/mpeg" >
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+            </div>
+            <!-- End media -->
           </div>
         </div>
       </ng-template>
     </li>
 </ul>
   </div>
-  <div class="type_msg">
-    <form class="input_msg_w rite" (ngSubmit)="sendMessage()" (click)="sendMessage()">
-      <label>
-        <input
-          type="text"
-          class="write_msg"
-          placeholder="Type a message"
-          name="newMessage"
-          [(ngModel)]="newMessage">
-      </label>
-      <button class="msg_send_btn" type="button">
-        <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-      </button>
-    </form>
-  </div>
+  <div *ngIf="room.chatType==='SYSTEM' && currentUser.role==='ROLE_USER'
+        then hide_msg
+        else show_msg;"></div>
+        <ng-template #hide_msg>
+          <div></div>
+        </ng-template>
+        <ng-template #show_msg>
+          <div class="type_msg">
+            <form class="input_msg_w rite" > <!--(ngSubmit)="sendMessage()"-->
+              <label>
+                <input
+                  type="text"
+                  class="write_msg"
+                  placeholder="Type a message"
+                  name="newMessage"
+                  [(ngModel)]="newMessage">
+              </label>
+                <!-- <label class="file_choose_btn" for="exampleInputFile"><i class="fa fa-paperclip" aria-hidden="true" style="font-size:30px;color: #10804E;"></i></label>
+                <input type="file" name="file" (change)="fileChange($event)" class="msg_send_btn" id="exampleInputFile" aria-describedby="fileHelp"> -->
 
-  </div>
+              <div  class="file-select-name">
+                <div id="file-select-id" ></div>
+                <button  (click)="deleteFile()" class="file-select-delete-icon" >
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+                <div class="add-file-to-msg">
+                      <label for="file-upload" ><i class="fa fa-paperclip"></i></label>
+                      <input id="file-upload" name ="file-upload" type="file" name="profile" (change)="onFileSelect($event)"  hidden />
+                </div>
+              <div *ngIf="showVoiceMessageName" class="msg_voice_file_name">
+                <p>Голосове повідомлення
+                  <button  (click)="deleteVoiceMessage()" class="msg_delete_voice_btn" >
+                    <i  class="fa fa-times"></i>
+                  </button>
+                </p>
+              </div>
+
+              <div class="spin-container" *ngIf="spiner">
+                <div class="spin"></div>
+              </div>
 
 
+              <button class="msg_send_btn" type="button" (click)="sendMessage()" [disabled]="sendBtnDisabled">
+                <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+              </button>
+            </form>
+            <button id="msg_voice_btn_id" class="msg_voice" (click)="recordVoiceMessage()" >
+              <i class="fa fa-microphone" aria-hidden="true"></i>
+            </button>
 
+          </div>
+        </ng-template>
+</div>

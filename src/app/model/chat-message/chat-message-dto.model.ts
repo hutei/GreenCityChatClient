@@ -4,4 +4,6 @@ export class ChatMessageDto {
   public content: string;
   public senderId: number;
   public status: string;
+  public fileName: string;
+  public fileType: string;
 }
