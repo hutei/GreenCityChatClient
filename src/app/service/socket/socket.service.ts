@@ -11,6 +11,7 @@ import {ChatRoomsComponent} from '../../component/chat-rooms/chat-rooms.componen
 import {MessageLike} from '../../model/chat-message/message-like';
 import {GroupChatRoomCreateDto} from '../../model/chat-room/group-chat-room-create-dto.model';
 import {root} from 'rxjs/internal-compatibility';
+import {UserService} from "../user/user.service";
 
 // @ts-ignore
 @Injectable({
@@ -26,6 +27,7 @@ export class SocketService {
 
   constructor(private chatService: ChatRoomService) {
     this.chatService.getAllVisibleRooms().subscribe(data => {this.chatRooms = data; });
+
   }
   connect(): void {
     this.webSocket = new SockJS(webSocketLink + webSocketEndPointLink);
@@ -37,7 +39,7 @@ export class SocketService {
   onConnected = () => {
     console.log('connected');
     this.stompClient.subscribe('/rooms/user/' + this.currentUser.id + '', this.onRoomReceived);
-
+      //this.allUsers.forEach(user => {this.stompClient.subscribe('/rooms/user/' + user.id + '', this.onRoomReceived)});
     this.chatRooms.forEach(chatRoom => {this.stompClient.subscribe('/room/' + chatRoom.id + '' + '/queue/messages',
       this.onMessageReceived); });
   }
@@ -50,13 +52,13 @@ export class SocketService {
     console.log(chatRoom);
     if (room.headers.createRoom !== undefined){
       console.log('if111111111111');
+
+      chatRoom.participants.push(this.currentUser);
+      this.stompClient.subscribe('/room/' + chatRoom.id + '' + '/queue/messages', this.onMessageReceived);
+
       this.getAllRooms().push(chatRoom);
       console.log(this.chatRooms);
 
-      // tslint:disable-next-line:no-shadowed-variable
-      this.getAllRooms().forEach(chatRoom => {this.stompClient.subscribe('/room/' + chatRoom.id + '' + '/queue/messages',
-        this.onMessageReceived); });
-      // window.location.assign('/');
 
     }else if (room.headers.updateRoom !== undefined){
       // updateRoom or rename
@@ -194,7 +196,7 @@ export class SocketService {
   }
   createNewChatRoom = (groupChatRoomCreateDto: GroupChatRoomCreateDto) => {
     console.log(groupChatRoomCreateDto);
-    const roomID = this.chatRooms.length + 1;
+    //const roomID = this.chatRooms.length + 1;
 
     this.stompClient.send('/app/chat/users/create-room', {}, JSON.stringify(groupChatRoomCreateDto));
     // this.stompClient.subscribe('/room/' + 37 + '' + '/queue/messages',
