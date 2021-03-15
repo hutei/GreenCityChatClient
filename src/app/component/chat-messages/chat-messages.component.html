@@ -17,13 +17,12 @@
           </div>
           <div class="received_msg">
             <div class="received_withd_msg">
-              <div *ngIf="message.fileType === null" >
-                <p>{{ message.content }}</p>
-              </div>
               <div *ngIf="message.likedUserId!==null&&message.likedUserId.length!==0" >
                 <div>{{message.likedUserId.length}}</div>
               </div>
-              <p>{{ message.content }}</p>
+              <div *ngIf="message.fileType === null" >
+                <p>{{ message.content }}</p>
+              </div>
               <!-- Show media -->
             <div *ngIf="message.fileType !== null">
               <div *ngIf="message.fileType === 'image'">

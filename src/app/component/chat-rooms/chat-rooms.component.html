@@ -50,7 +50,7 @@
           <h5  (click)="setCurrentRoom(room)">{{room.name}}
             <div *ngIf="room.chatType !== 'SYSTEM'">
               <div>
-                  <button  class="btn btn-navbar" (click)="deleteChatRoom(room.id)">
+                  <button  class="btn btn-navbar" (click)="deleteChatRoom(room)">
                   <i class="fa fa-trash" aria-hidden="true"></i>
                 </button>
               </div>
