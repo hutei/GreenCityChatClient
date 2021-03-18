@@ -12,6 +12,7 @@ import {MessageLike} from '../../model/chat-message/message-like';
 import {GroupChatRoomCreateDto} from '../../model/chat-room/group-chat-room-create-dto.model';
 import {root} from 'rxjs/internal-compatibility';
 import {UserService} from "../user/user.service";
+import {Subject} from "rxjs";
 
 // @ts-ignore
 @Injectable({
@@ -24,6 +25,7 @@ export class SocketService {
   chatRoom: ChatRoomDto;
   currentUser: UserDto;
   chatRooms: ChatRoomDto[];
+  chatRooms$ = new Subject();
 
   constructor(private chatService: ChatRoomService) {
     this.chatService.getAllVisibleRooms().subscribe(data => {this.chatRooms = data; });
@@ -53,38 +55,49 @@ export class SocketService {
     if (room.headers.createRoom !== undefined){
       console.log('if111111111111');
 
-      chatRoom.participants.push(this.currentUser);
       this.stompClient.subscribe('/room/' + chatRoom.id + '' + '/queue/messages', this.onMessageReceived);
 
       this.getAllRooms().push(chatRoom);
+      this.chatRooms$.next(this.chatRooms);
       console.log(this.chatRooms);
 
 
     }else if (room.headers.updateRoom !== undefined){
-      // updateRoom or rename
-      console.log('if111111111111');
-      let addedNewParticipant = true;
-      this.getAllRooms().forEach((cr, index) => {
-        if (cr.id === chatRoom.id ){
-          if (chatRoom.participants.includes(this.currentUser)) {
-            this.getAllRooms().splice(index, 1, chatRoom);
-          }else {
-            // chat is updated but this user are not in participants (user was removed)
-            this.getAllRooms().splice(index, 1);
-          }
-          addedNewParticipant = false;
-        }
-      });
-      //  new user is added
-      if (addedNewParticipant){
-        console.log("Add new User");
-        this.getAllRooms().push(chatRoom);
-      }
-      console.log('afterUpdate');
-      console.log(this.chatRooms);
 
-      this.getAllRooms().forEach(chatRoom => {this.stompClient.subscribe('/room/' + chatRoom.id + '' + '/queue/messages',
-        this.onMessageReceived); });
+      // перевірка наявності юзера
+      if (this.ifCurrentUserExistInChatRoom(chatRoom)){
+        // Якщо є user тоді оновляємо або створюємо нову
+        let updateRoomBool = false;
+        // оновлення
+        this.chatRooms.forEach((cr, index) => {
+          if (cr.id === chatRoom.id){
+            // @ts-ignore
+            this.getAllRooms().splice(index, 1, chatRoom);
+            //this.chatRooms$.next(this.chatRooms);
+            updateRoomBool = true;
+          }
+        });
+        if (!updateRoomBool){
+          this.chatRooms.push(chatRoom);
+          //this.chatRooms$.next(this.chatRooms);
+        }
+
+      }else {
+        // якщо юзера немає то його було видалено, видаляємо чат
+        this.chatRooms.forEach((cr, index) => {
+          if (cr.id === chatRoom.id) {
+            this.getAllRooms().splice(index, 1);
+            console.log("after remove");
+            console.log(this.chatRooms);
+            // this.chatRooms$.next(this.chatRooms);
+          }
+        });
+      }
+      // tslint:disable-next-line:no-shadowed-variable
+      console.log("1111");
+      console.log(this.getAllRooms());
+      this.chatRooms$.next(this.chatRooms);
+
 
     }else  if (room.headers.deleteRoom !== undefined){
       console.log('delete Chat Room');
@@ -94,6 +107,7 @@ export class SocketService {
        }
       });
       console.log(this.chatRooms);
+      this.chatRooms$.next(this.chatRooms);
     }else if (room.headers.leaveRoom !== undefined){
       console.log('leaveRoom');
       this.getAllRooms().forEach((cr, index) => {
@@ -112,6 +126,7 @@ export class SocketService {
         }
       });
       console.log(this.chatRooms);
+      this.chatRooms$.next(this.chatRooms);
     }
     else {
       console.log('HJKKJKBKJKJBKJBKBJKB');
@@ -196,11 +211,8 @@ export class SocketService {
   }
   createNewChatRoom = (groupChatRoomCreateDto: GroupChatRoomCreateDto) => {
     console.log(groupChatRoomCreateDto);
-    //const roomID = this.chatRooms.length + 1;
 
     this.stompClient.send('/app/chat/users/create-room', {}, JSON.stringify(groupChatRoomCreateDto));
-    // this.stompClient.subscribe('/room/' + 37 + '' + '/queue/messages',
-    //   this.onMessageReceived);
   }
 
   updateChatRoom = (room: any) => {
@@ -208,6 +220,17 @@ export class SocketService {
     console.log(room);
     this.stompClient.send('/app/chat/users/update-room', {}, JSON.stringify(room));
   }
+  deleteParticipantChatRoom = (room: any) => {
+    console.log('upadte chat Room');
+    console.log(room);
+    this.stompClient.send('/app/chat/users/delete-participants-room', {}, JSON.stringify(room));
+  }
+  // addPatricipantsToChatRoom = (room: any) => {
+  //   console.log('upadte chat Room');
+  //   console.log(room);
+  //   this.stompClient.send('/app/chat/users/add-participants-room', {}, JSON.stringify(room));
+  // }
+
   deleteChatRoom = (room: any) => {
     console.log('delete in soket');
     console.log(room);
@@ -216,9 +239,8 @@ export class SocketService {
   leaveChatRoom = (room: any) => {
   this.stompClient.send('/app/chat/users/leave-room', {}, JSON.stringify(room));
 }
-  getAllAviableChatRooms(){
-    return this.chatRooms;
-  }
+
+
   compareParticipantArrays(currentList: any, newList: any ): boolean{
    newList.forEach(cp => {
       if ( !currentList.includes(cp) ){
@@ -226,6 +248,17 @@ export class SocketService {
       }
     });
    return true;
+  }
+  ifCurrentUserExistInChatRoom(chatRoom: any): boolean{
+    let userExist = false;
+    chatRoom.participants.forEach(participant => {
+      if (participant.id === this.currentUser.id){
+        console.log(participant.id);
+        userExist =  true;
+      }
+    });
+    console.log(this.currentUser.id);
+    return userExist;
   }
 
 }

@@ -69,6 +69,11 @@ export class ChatRoomsComponent implements OnInit {
     this.allParticipants = [];
     this.queryField.valueChanges
       .subscribe( result => this.userService.getAllUsersByQuery(result).subscribe(data => {this.allParticipants = data; } ));
+    this.socketService.chatRooms$.subscribe(data => {
+      // @ts-ignore
+      this.chatRooms = data;
+    });
+
     //this.socketService.connect();
 
     // setTimeout(function(){
@@ -195,19 +200,18 @@ export class ChatRoomsComponent implements OnInit {
   }
   createGroupChat(): void {
     // this.list.push(this.currentUser);
-    const name = (document.getElementById('chatName') as HTMLInputElement).value;
-    this.socketService.setAllRooms(this.chatRooms);
+    const name = (document.getElementById('chatName') as HTMLInputElement).value; // не бажано так робити
+    // this.socketService.setAllRooms(this.chatRooms);
     const chatRoom = new GroupChatRoomCreateDto();
     // tslint:disable-next-line:only-arrow-functions typedef
     chatRoom.usersId = this.list.map(function(i){
       return i.id;
     });
     chatRoom.chatName = name;
-    console.log("1111111111111111111111111111111111");
-    this.socketService.setAllRooms(this.chatRooms);
+
     this.socketService.createNewChatRoom(chatRoom);
     //this.chatRoomService.createGroupChatRoom(this.list, name);
-    window.location.assign('/');
+    window.location.assign('/'); // поміняти
   }
 
   viewGroupInfo(info, room) {
@@ -227,9 +231,10 @@ export class ChatRoomsComponent implements OnInit {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
   }
+  // tslint:disable-next-line:typedef
   renameGroupChat(room: any) {
     this.socketService.setChatRoomDto(room);
-    this.socketService.setAllRooms(this.chatRooms);
+    // this.socketService.setAllRooms(this.chatRooms);
     room.name = this.model.chatName;
     // this.chatRoomService.manageChatRoom(room);
     this.socketService.updateChatRoom(room);
@@ -273,12 +278,27 @@ export class ChatRoomsComponent implements OnInit {
     });
   }
 
+  // rename or add new participants to chat room
+  // tslint:disable-next-line:typedef
   manageChatRoom(members: UserDto[]) {
     members.forEach(part => this.currentClickedRoom.participants.push(part));
-    // this.chatRoomService.manageChatRoom(this.currentClickedRoom);
     this.socketService.updateChatRoom(this.currentClickedRoom);
     window.location.assign('/');
   }
+
+  // tslint:disable-next-line:typedef
+  removeParticipantsFromChatRoom(members: UserDto[]){
+    members.forEach(part => this.currentClickedRoom.participants.push(part));
+    this.socketService.deleteParticipantChatRoom(this.currentClickedRoom);
+    window.location.assign('/');
+  }
+
+  // addParticipantsToChatRoom(members: UserDto[]) {
+  //   members.forEach(part => this.currentClickedRoom.participants.push(part));
+  //   // this.chatRoomService.manageChatRoom(this.currentClickedRoom);
+  //   this.socketService.addPatricipantsToChatRoom(this.currentClickedRoom);
+  //   window.location.assign('/');
+  // }
 
 
 
