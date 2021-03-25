@@ -50,7 +50,7 @@
           <h5  (click)="setCurrentRoom(room)">{{room.name}}
             <div *ngIf="room.chatType !== 'SYSTEM'">
               <div>
-                  <button  class="btn btn-navbar" (click)="deleteChatRoom(room.id)">
+                  <button  class="btn btn-navbar" (click)="deleteChatRoom(room)">
                   <i class="fa fa-trash" aria-hidden="true"></i>
                 </button>
               </div>
@@ -178,7 +178,7 @@
           </div>
         </td> -->
         <td>
-          <button (click)="manageChatRoom(list)" class="btn btn-outline-dark">Save</button>
+          <button (click)="removeParticipantsFromChatRoom(list)" class="btn btn-outline-dark">Save</button>
           <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Cancel</button>
         </td>
       </tr>

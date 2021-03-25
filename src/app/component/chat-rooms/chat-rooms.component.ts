@@ -9,6 +9,15 @@ import { FormControl } from '@angular/forms';
 import {SocketService} from '../../service/socket/socket.service';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {GroupChatRoomCreateDto} from '../../model/chat-room/group-chat-room-create-dto.model';
+import { interval } from 'rxjs';
+
+//emit value in sequence every 1 second
+// const source = interval(function (x){
+//   console.log("INTERVA;");
+//   this.chatRooms = this.socketService.getAllRooms();
+// },1000);
+
 
 
 @Component({
@@ -19,11 +28,13 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class ChatRoomsComponent implements OnInit {
 
 
+
   constructor(private userService: UserService, private chatRoomService: ChatRoomService,
               private dialog: MatDialog,
               private  socketService: SocketService,
               private modalService: NgbModal) {
   }
+  // const interval
   currentUser: UserDto;
   chatRooms = [];
   closeResult: any;
@@ -41,22 +52,47 @@ export class ChatRoomsComponent implements OnInit {
   chatRoomRef: MatDialogRef<ModalComponent>;
 
 
+  /// витягнення з часом всіх повідомлень із сервісу
+//   source = interval(1000);
+// //output: 0,1,2,3,4,5....
+//   subscribe = this.source.subscribe(val => {console.log(val);
+//     this.chatRooms =  this.socketService.getAllRooms();
+//   });
+
   ngOnInit(): void {
     this.list = [];
     this.getAllRooms();
+    //this.socketService.setAllRooms(this.chatRooms);
     this.getCurrentUser();
     this.getAllParticipants();
     this.getGroupsChatRooms();
     this.allParticipants = [];
     this.queryField.valueChanges
       .subscribe( result => this.userService.getAllUsersByQuery(result).subscribe(data => {this.allParticipants = data; } ));
+    this.socketService.chatRooms$.subscribe(data => {
+      // @ts-ignore
+      this.chatRooms = data;
+    });
+
+    //this.socketService.connect();
+
+    // setTimeout(function(){
+    //   this.chatRooms = this.socketService.getAllRooms();
+    //   console.log("TIME");
+    // }, 1000);
+  }
+  // tslint:disable-next-line:use-lifecycle-interface
+  ngOnDestroy(): void {
+    this.socketService.closeWebSocket();
   }
 
   getAllRooms(): void {
     this.chatRoomService.getAllVisibleRooms().subscribe(data => { this.chatRooms = data; console.log(this.chatRooms); });
   }
   getCurrentUser(): void {
-    this.userService.getCurrentUser().subscribe(data => { this.currentUser = data; });
+    this.userService.getCurrentUser().subscribe(data => { this.currentUser = data;
+                                                          this.socketService.setCurrentUser(data);
+    });
   }
 
   setCurrentRoom(room: ChatRoomDto): void {
@@ -102,7 +138,7 @@ export class ChatRoomsComponent implements OnInit {
   getChatRooms(name: string) {
     this.chatRoomService.getAllChatRoomsByQuery(name).subscribe(data => {this.chatRooms = data; });
   }
-  deleteChatRoom(roomId): void {
+  deleteChatRoom(room): void {
     Swal.fire({
       title: 'Do you want to delete the chat-room?',
       showDenyButton: true,
@@ -119,9 +155,10 @@ export class ChatRoomsComponent implements OnInit {
           });
           return;
         }
-        this.chatRoomService.deleteChatRoom(roomId);
+        // this.chatRoomService.deleteChatRoom(roomId);
+        this.socketService.deleteChatRoom(room);
         this.chatRooms.forEach( (cr, index) => {
-          if (cr.id === roomId) {
+          if (cr.id === room.id) {
             this.chatRooms.splice(index, 1);
           }
         } );
@@ -141,7 +178,7 @@ export class ChatRoomsComponent implements OnInit {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
   }
-  
+
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
@@ -163,9 +200,18 @@ export class ChatRoomsComponent implements OnInit {
   }
   createGroupChat(): void {
     // this.list.push(this.currentUser);
-    const name = (document.getElementById('chatName') as HTMLInputElement).value;
-    this.chatRoomService.createGroupChatRoom(this.list, name);
-    window.location.assign('/');
+    const name = (document.getElementById('chatName') as HTMLInputElement).value; // не бажано так робити
+    // this.socketService.setAllRooms(this.chatRooms);
+    const chatRoom = new GroupChatRoomCreateDto();
+    // tslint:disable-next-line:only-arrow-functions typedef
+    chatRoom.usersId = this.list.map(function(i){
+      return i.id;
+    });
+    chatRoom.chatName = name;
+
+    this.socketService.createNewChatRoom(chatRoom);
+    //this.chatRoomService.createGroupChatRoom(this.list, name);
+    window.location.assign('/'); // поміняти
   }
 
   viewGroupInfo(info, room) {
@@ -185,20 +231,27 @@ export class ChatRoomsComponent implements OnInit {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
   }
+  // tslint:disable-next-line:typedef
   renameGroupChat(room: any) {
+    this.socketService.setChatRoomDto(room);
+    // this.socketService.setAllRooms(this.chatRooms);
     room.name = this.model.chatName;
-    this.chatRoomService.manageChatRoom(room);
+    // this.chatRoomService.manageChatRoom(room);
+    this.socketService.updateChatRoom(room);
     window.location.assign('/');
   };
 
   leaveGroupChat(id: number) {
     let room = new ChatRoomDto();
-    this.chatRooms.forEach(r => {
+    this.chatRooms.forEach((r, index) => {
       if(r.id === id) {
           room = r;
+          this.chatRooms.slice(index, 1);
         }
     });
-    this.chatRoomService.leaveChatRoom(room);
+    // this.chatRoomService.leaveChatRoom(room);
+    this.socketService.setCurrentUser(this.currentUser);
+    this.socketService.leaveChatRoom(room);
     window.location.assign('/');
   }
 
@@ -225,11 +278,35 @@ export class ChatRoomsComponent implements OnInit {
     });
   }
 
+  // rename or add new participants to chat room
+  // tslint:disable-next-line:typedef
   manageChatRoom(members: UserDto[]) {
     members.forEach(part => this.currentClickedRoom.participants.push(part));
-    this.chatRoomService.manageChatRoom(this.currentClickedRoom);
+    this.socketService.updateChatRoom(this.currentClickedRoom);
     window.location.assign('/');
   }
 
+  // tslint:disable-next-line:typedef
+  removeParticipantsFromChatRoom(members: UserDto[]){
+    members.forEach(part => this.currentClickedRoom.participants.push(part));
+    this.socketService.deleteParticipantChatRoom(this.currentClickedRoom);
+    window.location.assign('/');
+  }
+
+  // addParticipantsToChatRoom(members: UserDto[]) {
+  //   members.forEach(part => this.currentClickedRoom.participants.push(part));
+  //   // this.chatRoomService.manageChatRoom(this.currentClickedRoom);
+  //   this.socketService.addPatricipantsToChatRoom(this.currentClickedRoom);
+  //   window.location.assign('/');
+  // }
+
+
+
+//   interval(1000).subscribe(n =>
+//   console.log(n);
+// );
+  // getRoomFromService(){
+  //   this.chatRooms = this.socketService.getAllRooms();
+  // }
 
 }

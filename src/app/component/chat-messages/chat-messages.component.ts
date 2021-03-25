@@ -113,6 +113,9 @@ uploadForm: FormGroup;
         this.fileUrl = null;
         this.showVoiceMessageName = false;
         this.showFileSelected = false;
+        document.getElementById('file-upload').nodeValue = '';
+        document.getElementById('file-select-id').innerText = '';
+        this.nameFileHide = true;
   }
   deleteMessage(messageId): void {
     this.socketService.setChatRoomDto(this.room);
@@ -241,6 +244,7 @@ sendFile(file: FormData): void {
     });
     this.fileName = null;
     this.fileType = null;
+    this.showVoiceMessageName = false;
   }
   deleteFile(){
     this.fileService.deleteFile(this.fileName).subscribe(data=>{
