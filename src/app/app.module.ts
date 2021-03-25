@@ -14,7 +14,8 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
+import { CookieService } from 'ngx-cookie-service';
+import {authInterceptorProviders} from './service/interseptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     NgbModule
   ],
   entryComponents: [ModalComponent],
-  providers: [ChatRoomsComponent],
+  providers: [ChatRoomsComponent, CookieService, authInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -47,9 +47,10 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   encodedString: string;
   file: any;
   fileName: string;
+  fileUrl: string;
   fileType: string;
+  showFileSelected: boolean;
   showVoiceMessageName: boolean;
-
 
   @Input() room: ChatRoomDto;
   @Input() currentUser: UserDto;
@@ -76,6 +77,7 @@ uploadForm: FormGroup;
     this.uploadForm = this.formBuilder.group({
       profile: ['']
     });
+    this.showFileSelected = false;
   }
 
   ngOnDestroy(): void {
@@ -93,6 +95,7 @@ uploadForm: FormGroup;
       chatMessage.senderId = this.currentUser.id;
       chatMessage.roomId = this.room.id;
       chatMessage.fileName = this.fileName;
+      chatMessage.fileUrl = this.fileUrl;
       chatMessage.fileType = this.fileType;
       if (this.newMessage.trim() === '' && chatMessage.fileName === undefined) {
         return;
@@ -107,7 +110,9 @@ uploadForm: FormGroup;
     }
         this.fileName = null;
         this.fileType = null;
+        this.fileUrl = null;
         this.showVoiceMessageName = false;
+        this.showFileSelected = false;
   }
   deleteMessage(messageId): void {
     this.socketService.setChatRoomDto(this.room);
@@ -161,6 +166,7 @@ sendFile(file: FormData): void {
   console.log(file);
   this.fileService.sendFile(file).subscribe(data => {this.fileName = data.fileName;
                                                      this.fileType = data.fileType;
+                                                     this.fileUrl = data.fileUrl;
                                                      console.log(data);
                                                      this.spiner = false;
                                                      this.sendBtnDisabled = false;
@@ -216,6 +222,7 @@ sendFile(file: FormData): void {
     this.fileService.sendVoiceFile(formData).subscribe(data => {
       this.fileName = data.fileName;
       this.fileType = data.fileType;
+      this.fileUrl = data.fileUrl;
       this.showVoiceMessageName = true;
       console.log(data);
       this.spiner = false;

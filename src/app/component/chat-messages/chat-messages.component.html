@@ -27,20 +27,20 @@
               <!-- Show media -->
             <div *ngIf="message.fileType !== null">
               <div *ngIf="message.fileType === 'image'">
-                <img src="http://localhost:8070/chat/media/{{message.fileName}}" alt="image">
+                <img src="{{message.fileUrl}}" alt="image">
               </div>
               <div *ngIf="message.fileType === 'video'">
                 <video width="260" controls>
-                  <source src="http://localhost:8070/chat/media/{{message.fileName}}">
+                  <source src="{{message.fileUrl}}">
                   Your browser doesn't support HTML5 video tag.
                 </video>
               </div>
               <div *ngIf="message.fileType === 'doc'">
-                <a href="http://localhost:8070/chat/document/download/{{message.fileName}}">{{message.fileName}}</a>
+                <a href="{{message.fileUrl}}">{{message.fileName}}</a>
               </div>
               <div *ngIf="message.fileType === 'audio' " >
                 <audio style="width:260px;"  controls>
-                  <source src="http://localhost:8070/chat/media/{{message.fileName}}" type="audio/mpeg" >
+                  <source src="{{message.fileUrl}}" type="audio/mpeg" >
                   Your browser does not support the audio element.
                 </audio>
               </div>
@@ -95,20 +95,20 @@
             <!-- Show media -->
             <div *ngIf="message.fileType !== null">
               <div *ngIf="message.fileType === 'image'">
-                <img src="http://localhost:8070/chat/media/{{message.fileName}}" alt="image">
+                <img src="{{message.fileUrl}}" alt="image">
               </div>
               <div *ngIf="message.fileType === 'video'">
                 <video width="260" controls>
-                  <source src="http://localhost:8070/chat/media/{{message.fileName}}">
+                  <source src="{{message.fileUrl}}">
                   Your browser doesn't support HTML5 video tag.
                 </video>
               </div>
               <div *ngIf="message.fileType === 'doc'">
-                <a href="http://localhost:8070/chat/document/download/{{message.fileName}}">{{message.fileName}}</a>
+                <a href="{{message.fileUrl}}">{{message.fileName}}</a>
               </div>
               <div *ngIf="message.fileType === 'audio' " >
                 <audio style="width:260px;"  controls>
-                  <source src="http://localhost:8070/chat/media/{{message.fileName}}" type="audio/mpeg" >
+                  <source src="{{message.fileUrl}}" type="audio/mpeg" >
                   Your browser does not support the audio element.
                 </audio>
               </div>
@@ -141,11 +141,11 @@
                 <input type="file" name="file" (change)="fileChange($event)" class="msg_send_btn" id="exampleInputFile" aria-describedby="fileHelp"> -->
 
               <div  class="file-select-name">
-                <div id="file-select-id" ></div>
-                <button  (click)="deleteFile()" class="file-select-delete-icon" >
-                  <i class="fa fa-times"></i>
-                </button>
-              </div>
+                  <div id="file-select-id" ></div>
+                  <button  (click)="deleteFile()" class="file-select-delete-icon" >
+                    <i class="fa fa-times"></i>
+                  </button>
+                </div>
                 <div class="add-file-to-msg">
                       <label for="file-upload" ><i class="fa fa-paperclip"></i></label>
                       <input id="file-upload" name ="file-upload" type="file" name="profile" (change)="onFileSelect($event)"  hidden />
