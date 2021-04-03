@@ -13,6 +13,8 @@ import {GroupChatRoomCreateDto} from '../../model/chat-room/group-chat-room-crea
 import {root} from 'rxjs/internal-compatibility';
 import {UserService} from "../user/user.service";
 import {Subject} from "rxjs";
+import {CookieService} from 'ngx-cookie-service';
+import {HttpHeaders} from "@angular/common/http";
 
 // @ts-ignore
 @Injectable({
@@ -27,7 +29,9 @@ export class SocketService {
   chatRooms: ChatRoomDto[];
   chatRooms$ = new Subject();
 
-  constructor(private chatService: ChatRoomService) {
+
+  constructor(private chatService: ChatRoomService,
+              private cookieService: CookieService) {
     this.chatService.getAllVisibleRooms().subscribe(data => {this.chatRooms = data; });
 
   }
@@ -236,8 +240,8 @@ export class SocketService {
     console.log(room);
     this.stompClient.send('/app/chat/users/delete-room', {}, JSON.stringify(room));
   }
-  leaveChatRoom = (room: any) => {
-  this.stompClient.send('/app/chat/users/leave-room', {}, JSON.stringify(room));
+  leaveChatRoom = (leaveChatDto: any) => {
+  this.stompClient.send('/app/chat/users/leave-room', {}, JSON.stringify(leaveChatDto));
 }
 
 

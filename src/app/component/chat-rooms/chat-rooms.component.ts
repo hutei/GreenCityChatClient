@@ -11,6 +11,7 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {GroupChatRoomCreateDto} from '../../model/chat-room/group-chat-room-create-dto.model';
 import { interval } from 'rxjs';
+import {LeaveChatDto} from "../../model/chat-room/leave-chat-dto";
 
 //emit value in sequence every 1 second
 // const source = interval(function (x){
@@ -208,6 +209,7 @@ export class ChatRoomsComponent implements OnInit {
       return i.id;
     });
     chatRoom.chatName = name;
+    chatRoom.ownerId = this.currentUser.id;
 
     this.socketService.createNewChatRoom(chatRoom);
     //this.chatRoomService.createGroupChatRoom(this.list, name);
@@ -242,6 +244,7 @@ export class ChatRoomsComponent implements OnInit {
   };
 
   leaveGroupChat(id: number) {
+    let leaveChatDto = new LeaveChatDto();
     let room = new ChatRoomDto();
     this.chatRooms.forEach((r, index) => {
       if(r.id === id) {
@@ -251,7 +254,9 @@ export class ChatRoomsComponent implements OnInit {
     });
     // this.chatRoomService.leaveChatRoom(room);
     this.socketService.setCurrentUser(this.currentUser);
-    this.socketService.leaveChatRoom(room);
+    leaveChatDto.chatRoomDto = room;
+    leaveChatDto.userId = this.currentUser.id;
+    this.socketService.leaveChatRoom(leaveChatDto);
     window.location.assign('/');
   }
 
