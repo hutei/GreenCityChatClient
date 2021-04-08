@@ -12,6 +12,7 @@ import {ChatFileService} from 'src/app/service/chat-file/chat-file.service';
 declare var $: any;
 import * as RecordRTC from 'recordrtc';
 import { DomSanitizer } from '@angular/platform-browser';
+import {MessageLike} from "../../model/chat-message/message-like";
 
 
 @Component({
@@ -46,9 +47,10 @@ export class ChatMessagesComponent implements OnInit, OnDestroy {
   encodedString: string;
   file: any;
   fileName: string;
+  fileUrl: string;
   fileType: string;
+  showFileSelected: boolean;
   showVoiceMessageName: boolean;
-
 
   @Input() room: ChatRoomDto;
   @Input() currentUser: UserDto;
@@ -75,6 +77,7 @@ uploadForm: FormGroup;
     this.uploadForm = this.formBuilder.group({
       profile: ['']
     });
+    this.showFileSelected = false;
   }
 
   ngOnDestroy(): void {
@@ -92,6 +95,7 @@ uploadForm: FormGroup;
       chatMessage.senderId = this.currentUser.id;
       chatMessage.roomId = this.room.id;
       chatMessage.fileName = this.fileName;
+      chatMessage.fileUrl = this.fileUrl;
       chatMessage.fileType = this.fileType;
       if (this.newMessage.trim() === '' && chatMessage.fileName === undefined) {
         return;
@@ -106,7 +110,12 @@ uploadForm: FormGroup;
     }
         this.fileName = null;
         this.fileType = null;
+        this.fileUrl = null;
         this.showVoiceMessageName = false;
+        this.showFileSelected = false;
+        document.getElementById('file-upload').nodeValue = '';
+        document.getElementById('file-select-id').innerText = '';
+        this.nameFileHide = true;
   }
   deleteMessage(messageId): void {
     this.socketService.setChatRoomDto(this.room);
@@ -131,6 +140,12 @@ uploadForm: FormGroup;
       this.socketService.updateMessage(this.room.messages[index]); }
     });
   }
+  likeMessage(messageId):void{
+    const messageLike = new MessageLike();
+    messageLike.messageId = messageId;
+    messageLike.participantId = this.currentUser.id;
+    this.socketService.likeMessage(messageLike);
+  }
   getLastMessageId(): void {
     this.chatMessageService.getLastMessageId().subscribe(data => {ChatMessagesComponent.lastMessage = data; } );
   }
@@ -154,6 +169,7 @@ sendFile(file: FormData): void {
   console.log(file);
   this.fileService.sendFile(file).subscribe(data => {this.fileName = data.fileName;
                                                      this.fileType = data.fileType;
+                                                     this.fileUrl = data.fileUrl;
                                                      console.log(data);
                                                      this.spiner = false;
                                                      this.sendBtnDisabled = false;
@@ -209,6 +225,7 @@ sendFile(file: FormData): void {
     this.fileService.sendVoiceFile(formData).subscribe(data => {
       this.fileName = data.fileName;
       this.fileType = data.fileType;
+      this.fileUrl = data.fileUrl;
       this.showVoiceMessageName = true;
       console.log(data);
       this.spiner = false;
@@ -227,6 +244,7 @@ sendFile(file: FormData): void {
     });
     this.fileName = null;
     this.fileType = null;
+    this.showVoiceMessageName = false;
   }
   deleteFile(){
     this.fileService.deleteFile(this.fileName).subscribe(data=>{

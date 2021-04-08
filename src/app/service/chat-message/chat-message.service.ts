@@ -2,6 +2,7 @@ import { Injectable, OnInit } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {backendChatLink} from '../../../links';
 import {Observable} from 'rxjs';
+import {MessageLike} from "../../model/chat-message/message-like";
 
 /*import {Observable} from 'rxjs';
 import {ChatMessageDto} from '../../model/chat-message/chat-message-dto.model';*/

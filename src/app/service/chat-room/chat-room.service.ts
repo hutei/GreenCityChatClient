@@ -35,13 +35,13 @@ export class ChatRoomService{
   getAllVisibleRooms(): Observable<Array<ChatRoomDto>> {
     return this.http.get<Array<ChatRoomDto>>(`${backendChatLink}` + `/rooms/visible`);
   }
-  deleteChatRoom(roomId): void {
-    this.http.delete(`${backendChatLink}` + `/delete/room/` + roomId).subscribe();
-  }
-  leaveChatRoom(room: any) {
-    this.http.post(`${leaveChatRoomLink}`,room).subscribe();
-  }
-  manageChatRoom(room: any) {
-    this.http.post(`${manageParticipantsChatRoomLink}`,room).subscribe();
-  }
+  // deleteChatRoom(roomId): void {
+  //   this.http.delete(`${backendChatLink}` + `/delete/room/` + roomId).subscribe();
+  // }
+  // leaveChatRoom(room: any) {
+  //   this.http.post(`${leaveChatRoomLink}`,room).subscribe();
+  // }
+  // manageChatRoom(room: any) {
+  //   this.http.post(`${manageParticipantsChatRoomLink}`,room).subscribe();
+  // }
 }

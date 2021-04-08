@@ -6,4 +6,6 @@ export class ChatMessageDto {
   public status: string;
   public fileName: string;
   public fileType: string;
+  public fileUrl: string;
+  public likedUserId: Array<number>;
 }
