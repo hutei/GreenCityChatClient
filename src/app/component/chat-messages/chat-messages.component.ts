@@ -108,7 +108,7 @@ uploadForm: FormGroup;
     } catch (err) {
       console.log(err);
     }
-        this.fileName = null;
+        this.fileName = undefined;
         this.fileType = null;
         this.fileUrl = null;
         this.showVoiceMessageName = false;
@@ -242,7 +242,7 @@ sendFile(file: FormData): void {
     this.fileService.deleteFile(this.fileName).subscribe(data => {
       console.log(data);
     });
-    this.fileName = null;
+    this.fileName = undefined;
     this.fileType = null;
     this.showVoiceMessageName = false;
   }
@@ -250,7 +250,7 @@ sendFile(file: FormData): void {
     this.fileService.deleteFile(this.fileName).subscribe(data=>{
       console.log(data);
     });
-    this.fileName = null;
+    this.fileName = undefined;
     this.fileType = null;
     document.getElementById('file-upload').nodeValue = '';
     document.getElementById('file-select-id').innerText = '';
