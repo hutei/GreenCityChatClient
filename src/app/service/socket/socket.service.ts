@@ -62,14 +62,12 @@ export class SocketService {
     const chatRoom = JSON.parse(room.body);
     console.log(chatRoom);
     if (room.headers.createRoom !== undefined) {
-      console.log('if111111111111');
 
       this.stompClient.subscribe('/room/' + chatRoom.id + '' + '/queue/messages', this.onMessageReceived);
 
       this.getAllRooms().push(chatRoom);
       this.chatRooms$.next(this.chatRooms);
       console.log(this.chatRooms);
-
 
     } else if (room.headers.updateRoom !== undefined) {
 

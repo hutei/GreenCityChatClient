@@ -109,7 +109,7 @@ export class ChatRoomsComponent implements OnInit {
 
   setCurrentRoom(room: ChatRoomDto): void {
     // room.messages.sort( (msg1, msg2) => ( msg1.id > msg2.id ? 1 : -1));
-    this.ngOnInit();
+    //this.ngOnInit();
     this.currentClickedRoom = room;
     if (this.currentClickedRoom !== undefined) {
       if (this.currentClickedRoom.messages !== undefined) {
