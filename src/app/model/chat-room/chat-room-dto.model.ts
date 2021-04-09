@@ -8,4 +8,5 @@ export class ChatRoomDto {
   public chatType: string;
   public participants: UserDto[];
   public ownerId: number;
+  public amountUnreadMessages: number;
 }

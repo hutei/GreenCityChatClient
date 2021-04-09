@@ -5,20 +5,19 @@ import {ChatRoomService} from '../../service/chat-room/chat-room.service';
 import {ChatRoomDto} from '../../model/chat-room/chat-room-dto.model';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ModalComponent} from '../modal/modal.component';
-import { FormControl } from '@angular/forms';
+import {FormControl} from '@angular/forms';
 import {SocketService} from '../../service/socket/socket.service';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {GroupChatRoomCreateDto} from '../../model/chat-room/group-chat-room-create-dto.model';
-import { interval } from 'rxjs';
-import {LeaveChatDto} from "../../model/chat-room/leave-chat-dto";
+import {interval} from 'rxjs';
+import {LeaveChatDto} from '../../model/chat-room/leave-chat-dto';
 
 //emit value in sequence every 1 second
 // const source = interval(function (x){
 //   console.log("INTERVA;");
 //   this.chatRooms = this.socketService.getAllRooms();
 // },1000);
-
 
 
 @Component({
@@ -29,12 +28,12 @@ import {LeaveChatDto} from "../../model/chat-room/leave-chat-dto";
 export class ChatRoomsComponent implements OnInit {
 
 
-
   constructor(private userService: UserService, private chatRoomService: ChatRoomService,
               private dialog: MatDialog,
               private  socketService: SocketService,
               private modalService: NgbModal) {
   }
+
   // const interval
   currentUser: UserDto;
   chatRooms = [];
@@ -69,7 +68,9 @@ export class ChatRoomsComponent implements OnInit {
     this.getGroupsChatRooms();
     this.allParticipants = [];
     this.queryField.valueChanges
-      .subscribe( result => this.userService.getAllUsersByQuery(result).subscribe(data => {this.allParticipants = data; } ));
+      .subscribe(result => this.userService.getAllUsersByQuery(result).subscribe(data => {
+        this.allParticipants = data;
+      }));
     this.socketService.chatRooms$.subscribe(data => {
       // @ts-ignore
       this.chatRooms = data;
@@ -82,17 +83,27 @@ export class ChatRoomsComponent implements OnInit {
     //   console.log("TIME");
     // }, 1000);
   }
+
   // tslint:disable-next-line:use-lifecycle-interface
   ngOnDestroy(): void {
     this.socketService.closeWebSocket();
   }
 
-  getAllRooms(): void {
-    this.chatRoomService.getAllVisibleRooms().subscribe(data => { this.chatRooms = data; console.log(this.chatRooms); });
+  cleanUnreadMessagesForCurrentRoom(): void {
+    this.chatRoomService.cleanUnreadMessages(this.currentUser.id, this.currentClickedRoom.id);
   }
+
+  getAllRooms(): void {
+    this.chatRoomService.getAllVisibleRooms().subscribe(data => {
+      this.chatRooms = data;
+      console.log(this.chatRooms);
+    });
+  }
+
   getCurrentUser(): void {
-    this.userService.getCurrentUser().subscribe(data => { this.currentUser = data;
-                                                          this.socketService.setCurrentUser(data);
+    this.userService.getCurrentUser().subscribe(data => {
+      this.currentUser = data;
+      this.socketService.setCurrentUser(data);
     });
   }
 
@@ -107,13 +118,20 @@ export class ChatRoomsComponent implements OnInit {
     }
     this.socketService.setChatRoomDto(room);
   }
+
   getAllParticipants(): void {
-    this.userService.getAllUsers().subscribe(data => {this.allParticipants = data; console.log(this.allParticipants); });
+    this.userService.getAllUsers().subscribe(data => {
+      this.allParticipants = data;
+      console.log(this.allParticipants);
+    });
   }
+
   // tslint:disable-next-line:typedef
   getPrivateChatRoom(id) {
     // tslint:disable-next-line:max-line-length
-    this.chatRoomService.getPrivateChatRoom(id).subscribe(data => {this.currentClickedRoom = data; });
+    this.chatRoomService.getPrivateChatRoom(id).subscribe(data => {
+      this.currentClickedRoom = data;
+    });
     this.privateChatRoom = this.currentClickedRoom;
     if (this.currentClickedRoom !== undefined) {
       if (this.currentClickedRoom.messages !== undefined) {
@@ -122,23 +140,34 @@ export class ChatRoomsComponent implements OnInit {
     }
     this.setCurrentRoom(this.privateChatRoom);
   }
+
   // tslint:disable-next-line:typedef
   getParticipant(participant: any) {
-    this.userService.getAllUsersByQuery(participant).subscribe(data => {this.allParticipants = data; });
+    this.userService.getAllUsersByQuery(participant).subscribe(data => {
+      this.allParticipants = data;
+    });
   }
+
   // tslint:disable-next-line:typedef
   getGroupsChatRooms() {
-    this.chatRoomService.getGroupChatRooms().subscribe(data => {this.groupChats = data; });
+    this.chatRoomService.getGroupChatRooms().subscribe(data => {
+      this.groupChats = data;
+    });
   }
+
   openAddFileDialog(): void {
     this.chatRoomRef = this.dialog.open(ModalComponent, {
       hasBackdrop: false,
     });
   }
+
   // tslint:disable-next-line:typedef
   getChatRooms(name: string) {
-    this.chatRoomService.getAllChatRoomsByQuery(name).subscribe(data => {this.chatRooms = data; });
+    this.chatRoomService.getAllChatRoomsByQuery(name).subscribe(data => {
+      this.chatRooms = data;
+    });
   }
+
   deleteChatRoom(room): void {
     Swal.fire({
       title: 'Do you want to delete the chat-room?',
@@ -149,7 +178,7 @@ export class ChatRoomsComponent implements OnInit {
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-        if(this.currentClickedRoom.ownerId !== this.currentUser.id && this.currentClickedRoom.chatType === 'GROUP') {
+        if (this.currentClickedRoom.ownerId !== this.currentUser.id && this.currentClickedRoom.chatType === 'GROUP') {
           Swal.fire({
             icon: 'error',
             text: 'You are not owner of this chat',
@@ -158,11 +187,11 @@ export class ChatRoomsComponent implements OnInit {
         }
         // this.chatRoomService.deleteChatRoom(roomId);
         this.socketService.deleteChatRoom(room);
-        this.chatRooms.forEach( (cr, index) => {
+        this.chatRooms.forEach((cr, index) => {
           if (cr.id === room.id) {
             this.chatRooms.splice(index, 1);
           }
-        } );
+        });
         Swal.fire('Success', '', 'success');
       } else if (result.isDenied) {
         Swal.fire('\n' +
@@ -193,19 +222,22 @@ export class ChatRoomsComponent implements OnInit {
   add(member: any): void {
     this.list.push(member);
   }
+
   remove(member): void {
-    this.list.forEach( (msg, index) => {
+    this.list.forEach((msg, index) => {
       if (msg.id === member.id) {
-        this.list.splice(index, 1); }
+        this.list.splice(index, 1);
+      }
     });
   }
+
   createGroupChat(): void {
     // this.list.push(this.currentUser);
     const name = (document.getElementById('chatName') as HTMLInputElement).value; // не бажано так робити
     // this.socketService.setAllRooms(this.chatRooms);
     const chatRoom = new GroupChatRoomCreateDto();
     // tslint:disable-next-line:only-arrow-functions typedef
-    chatRoom.usersId = this.list.map(function(i){
+    chatRoom.usersId = this.list.map(function(i) {
       return i.id;
     });
     chatRoom.chatName = name;
@@ -233,6 +265,7 @@ export class ChatRoomsComponent implements OnInit {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
   }
+
   // tslint:disable-next-line:typedef
   renameGroupChat(room: any) {
     this.socketService.setChatRoomDto(room);
@@ -247,10 +280,10 @@ export class ChatRoomsComponent implements OnInit {
     let leaveChatDto = new LeaveChatDto();
     let room = new ChatRoomDto();
     this.chatRooms.forEach((r, index) => {
-      if(r.id === id) {
-          room = r;
-          this.chatRooms.slice(index, 1);
-        }
+      if (r.id === id) {
+        room = r;
+        this.chatRooms.slice(index, 1);
+      }
     });
     // this.chatRoomService.leaveChatRoom(room);
     this.socketService.setCurrentUser(this.currentUser);
@@ -292,7 +325,7 @@ export class ChatRoomsComponent implements OnInit {
   }
 
   // tslint:disable-next-line:typedef
-  removeParticipantsFromChatRoom(members: UserDto[]){
+  removeParticipantsFromChatRoom(members: UserDto[]) {
     members.forEach(part => this.currentClickedRoom.participants.push(part));
     this.socketService.deleteParticipantChatRoom(this.currentClickedRoom);
     window.location.assign('/');
@@ -304,7 +337,6 @@ export class ChatRoomsComponent implements OnInit {
   //   this.socketService.addPatricipantsToChatRoom(this.currentClickedRoom);
   //   window.location.assign('/');
   // }
-
 
 
 //   interval(1000).subscribe(n =>
